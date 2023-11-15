@@ -41,8 +41,8 @@ def get_dashboards():
 				{"chart": "Location-wise Asset Value", "width": "Half"},
 			],
 			"cards": [
-				{"card": "Total Assets"},
-				{"card": "New Assets (This Year)"},
+				{"card": "Total asset"},
+				{"card": "New asset (This Year)"},
 				{"card": "Asset Value"},
 			],
 		}
@@ -150,8 +150,8 @@ def get_charts(fiscal_year, year_start_date, year_end_date):
 def get_number_cards(fiscal_year, year_start_date, year_end_date):
 	return [
 		{
-			"name": "Total Assets",
-			"label": _("Total Assets"),
+			"name": "Total asset",
+			"label": _("Total asset"),
 			"function": "Count",
 			"document_type": "Asset",
 			"is_public": 1,
@@ -161,8 +161,8 @@ def get_number_cards(fiscal_year, year_start_date, year_end_date):
 			"doctype": "Number Card",
 		},
 		{
-			"name": "New Assets (This Year)",
-			"label": _("New Assets (This Year)"),
+			"name": "New asset (This Year)",
+			"label": _("New asset (This Year)"),
 			"function": "Count",
 			"document_type": "Asset",
 			"is_public": 1,

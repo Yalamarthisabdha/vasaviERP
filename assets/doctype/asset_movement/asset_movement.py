@@ -7,7 +7,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import get_link_to_form
 
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
+from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
 
 
 class AssetMovement(Document):
@@ -17,7 +17,7 @@ class AssetMovement(Document):
 		self.validate_employee()
 
 	def validate_asset(self):
-		for d in self.assets:
+		for d in self.asset:
 			status, company = frappe.db.get_value("Asset", d.asset, ["status", "company"])
 			if self.purpose == "Transfer" and status in ("Draft", "Scrapped", "Sold"):
 				frappe.throw(_("{0} asset cannot be transferred").format(status))
@@ -29,7 +29,7 @@ class AssetMovement(Document):
 				frappe.throw(_("Either location or employee must be required"))
 
 	def validate_location(self):
-		for d in self.assets:
+		for d in self.asset:
 			if self.purpose in ["Transfer", "Issue"]:
 				current_location = frappe.db.get_value("Asset", d.asset, "location")
 				if d.source_location:
@@ -82,7 +82,7 @@ class AssetMovement(Document):
 						)
 
 	def validate_employee(self):
-		for d in self.assets:
+		for d in self.asset:
 			if d.from_employee:
 				current_custodian = frappe.db.get_value("Asset", d.asset, "custodian")
 
@@ -106,7 +106,7 @@ class AssetMovement(Document):
 		current_location, current_employee = "", ""
 		cond = "1=1"
 
-		for d in self.assets:
+		for d in self.asset:
 			args = {"asset": d.asset, "company": self.company}
 
 			# latest entry corresponds to current document's location, employee when transaction date > previous dates

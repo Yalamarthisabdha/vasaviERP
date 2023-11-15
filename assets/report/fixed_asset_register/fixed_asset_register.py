@@ -15,7 +15,7 @@ from erpnext.accounts.report.financial_statements import (
 	validate_fiscal_year,
 )
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.assets.doctype.asset.asset import get_asset_value_after_depreciation
+from erpnext.asset.doctype.asset.asset import get_asset_value_after_depreciation
 
 
 def execute(filters=None):
@@ -58,15 +58,15 @@ def get_conditions(filters):
 
 		conditions[date_field] = ["between", [filters.year_start_date, filters.year_end_date]]
 
-	if filters.get("only_existing_assets"):
-		conditions["is_existing_asset"] = filters.get("only_existing_assets")
+	if filters.get("only_existing_asset"):
+		conditions["is_existing_asset"] = filters.get("only_existing_asset")
 	if filters.get("asset_category"):
 		conditions["asset_category"] = filters.get("asset_category")
 	if filters.get("cost_center"):
 		conditions["cost_center"] = filters.get("cost_center")
 
 	if status:
-		# In Store assets are those that are not sold or scrapped or capitalized or decapitalized
+		# In Store asset are those that are not sold or scrapped or capitalized or decapitalized
 		operand = "not in"
 		if status not in "In Location":
 			operand = "in"
@@ -83,11 +83,11 @@ def get_data(filters):
 	pr_supplier_map = get_purchase_receipt_supplier_map()
 	pi_supplier_map = get_purchase_invoice_supplier_map()
 
-	assets_linked_to_fb = get_assets_linked_to_fb(filters)
+	asset_linked_to_fb = get_asset_linked_to_fb(filters)
 
 	company_fb = frappe.get_cached_value("Company", filters.company, "default_finance_book")
 
-	if filters.include_default_book_assets and company_fb:
+	if filters.include_default_book_asset and company_fb:
 		finance_book = company_fb
 	elif filters.finance_book:
 		finance_book = filters.finance_book
@@ -99,7 +99,7 @@ def get_data(filters):
 	group_by = frappe.scrub(filters.get("group_by"))
 
 	if group_by in ("asset_category", "location"):
-		data = get_group_by_data(group_by, conditions, assets_linked_to_fb, depreciation_amount_map)
+		data = get_group_by_data(group_by, conditions, asset_linked_to_fb, depreciation_amount_map)
 		return data
 
 	fields = [
@@ -119,13 +119,13 @@ def get_data(filters):
 		"purchase_invoice",
 		"opening_accumulated_depreciation",
 	]
-	assets_record = frappe.db.get_all("Asset", filters=conditions, fields=fields)
+	asset_record = frappe.db.get_all("Asset", filters=conditions, fields=fields)
 
-	for asset in assets_record:
+	for asset in asset_record:
 		if (
-			assets_linked_to_fb
+			asset_linked_to_fb
 			and asset.calculate_depreciation
-			and asset.asset_id not in assets_linked_to_fb
+			and asset.asset_id not in asset_linked_to_fb
 		):
 			continue
 
@@ -212,18 +212,18 @@ def prepare_chart_data(data, filters):
 	}
 
 
-def get_assets_linked_to_fb(filters):
+def get_asset_linked_to_fb(filters):
 	afb = frappe.qb.DocType("Asset Finance Book")
 
 	query = frappe.qb.from_(afb).select(
 		afb.parent,
 	)
 
-	if filters.include_default_book_assets:
+	if filters.include_default_book_asset:
 		company_fb = frappe.get_cached_value("Company", filters.company, "default_finance_book")
 
 		if filters.finance_book and company_fb and cstr(filters.finance_book) != cstr(company_fb):
-			frappe.throw(_("To use a different finance book, please uncheck 'Include Default FB Assets'"))
+			frappe.throw(_("To use a different finance book, please uncheck 'Include Default FB asset'"))
 
 		query = query.where(
 			(afb.finance_book.isin([cstr(filters.finance_book), cstr(company_fb), ""]))
@@ -234,9 +234,9 @@ def get_assets_linked_to_fb(filters):
 			(afb.finance_book.isin([cstr(filters.finance_book), ""])) | (afb.finance_book.isnull())
 		)
 
-	assets_linked_to_fb = list(chain(*query.run(as_list=1)))
+	asset_linked_to_fb = list(chain(*query.run(as_list=1)))
 
-	return assets_linked_to_fb
+	return asset_linked_to_fb
 
 
 def get_asset_depreciation_amount_map(filters, finance_book):
@@ -268,7 +268,7 @@ def get_asset_depreciation_amount_map(filters, finance_book):
 		.where(asset.docstatus == 1)
 	)
 
-	if filters.only_existing_assets:
+	if filters.only_existing_asset:
 		query = query.where(asset.is_existing_asset == 1)
 	if filters.asset_category:
 		query = query.where(asset.asset_category == filters.asset_category)
@@ -296,7 +296,7 @@ def get_asset_depreciation_amount_map(filters, finance_book):
 	return dict(asset_depr_amount_map)
 
 
-def get_group_by_data(group_by, conditions, assets_linked_to_fb, depreciation_amount_map):
+def get_group_by_data(group_by, conditions, asset_linked_to_fb, depreciation_amount_map):
 	fields = [
 		group_by,
 		"name",
@@ -304,12 +304,12 @@ def get_group_by_data(group_by, conditions, assets_linked_to_fb, depreciation_am
 		"opening_accumulated_depreciation",
 		"calculate_depreciation",
 	]
-	assets = frappe.db.get_all("Asset", filters=conditions, fields=fields)
+	asset = frappe.db.get_all("Asset", filters=conditions, fields=fields)
 
 	data = []
 
-	for a in assets:
-		if assets_linked_to_fb and a.calculate_depreciation and a.name not in assets_linked_to_fb:
+	for a in asset:
+		if asset_linked_to_fb and a.calculate_depreciation and a.name not in asset_linked_to_fb:
 			continue
 
 		a["depreciated_amount"] = depreciation_amount_map.get(a["name"], 0.0)

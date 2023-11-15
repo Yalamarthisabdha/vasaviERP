@@ -175,7 +175,7 @@
  "links": [],
  "modified": "2021-01-22 12:33:45.888124",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Maintenance Log",
  "owner": "Administrator",
  "permissions": [

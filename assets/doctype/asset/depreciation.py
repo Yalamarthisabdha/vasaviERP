@@ -23,8 +23,8 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_checks_for_pl_and_bs_accounts,
 )
 from erpnext.accounts.doctype.journal_entry.journal_entry import make_reverse_journal_entry
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_asset_depr_schedule_doc,
 	get_asset_depr_schedule_name,
 	get_temp_asset_depr_schedule_doc,
@@ -95,7 +95,7 @@ def post_depreciation_entries(date=None):
 			error_log_names.append(error_log.name)
 
 	if failed_asset_names:
-		set_depr_entry_posting_status_for_failed_assets(failed_asset_names)
+		set_depr_entry_posting_status_for_failed_asset(failed_asset_names)
 		notify_depr_entry_posting_error(failed_asset_names, error_log_names)
 
 	frappe.db.commit()
@@ -391,7 +391,7 @@ def get_credit_and_debit_accounts(accumulated_depreciation_account, depreciation
 	return credit_account, debit_account
 
 
-def set_depr_entry_posting_status_for_failed_assets(failed_asset_names):
+def set_depr_entry_posting_status_for_failed_asset(failed_asset_names):
 	for asset_name in failed_asset_names:
 		frappe.db.set_value("Asset", asset_name, "depr_entry_posting_status", "Failed")
 
@@ -410,7 +410,7 @@ def notify_depr_entry_posting_error(failed_asset_names, error_log_names):
 	message = (
 		_("Hello,")
 		+ "<br><br>"
-		+ _("The following assets have failed to automatically post depreciation entries: {0}").format(
+		+ _("The following asset have failed to automatically post depreciation entries: {0}").format(
 			asset_links
 		)
 		+ "."

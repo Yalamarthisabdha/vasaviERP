@@ -7,9 +7,9 @@ from frappe.utils import add_months, cint, flt, get_link_to_form, getdate, time_
 
 import erpnext
 from erpnext.accounts.general_ledger import make_gl_entries
-from erpnext.assets.doctype.asset.asset import get_asset_account
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset.asset import get_asset_account
+from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_depr_schedule,
 	make_new_active_asset_depr_schedules_and_cancel_current_ones,
 )

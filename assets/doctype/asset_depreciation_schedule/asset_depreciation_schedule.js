@@ -21,7 +21,7 @@ frappe.ui.form.on('Depreciation Schedule', {
 		var row = locals[cdt][cdn];
 		if (!row.journal_entry) {
 			frappe.call({
-				method: "erpnext.assets.doctype.asset.depreciation.make_depreciation_entry",
+				method: "erpnext.asset.doctype.asset.depreciation.make_depreciation_entry",
 				args: {
 					"asset_depr_schedule_name": frm.doc.name,
 					"date": row.schedule_date

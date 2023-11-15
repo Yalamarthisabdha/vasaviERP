@@ -574,7 +574,7 @@
  ],
  "modified": "2023-10-27 17:03:46.629617",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",

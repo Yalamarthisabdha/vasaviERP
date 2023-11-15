@@ -124,7 +124,7 @@
  "max_attachments": 0, 
  "modified": "2018-05-16 22:43:15.255185",
  "modified_by": "Administrator", 
- "module": "Assets", 
+ "module": "asset", 
  "name": "Maintenance Team Member", 
  "name_case": "", 
  "owner": "Administrator", 

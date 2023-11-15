@@ -6,10 +6,10 @@ import unittest
 import frappe
 from frappe.utils import add_days, cstr, get_last_day, getdate, nowdate
 
-from erpnext.assets.doctype.asset.asset import get_asset_value_after_depreciation
-from erpnext.assets.doctype.asset.depreciation import post_depreciation_entries
-from erpnext.assets.doctype.asset.test_asset import create_asset_data
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset.asset import get_asset_value_after_depreciation
+from erpnext.asset.doctype.asset.depreciation import post_depreciation_entries
+from erpnext.asset.doctype.asset.test_asset import create_asset_data
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_asset_depr_schedule_doc,
 )
 from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_purchase_receipt

@@ -180,7 +180,7 @@
  "max_attachments": 0, 
  "modified": "2018-05-10 17:06:48.839347", 
  "modified_by": "Administrator", 
- "module": "Assets", 
+ "module": "asset", 
  "name": "Asset Category Account", 
  "name_case": "", 
  "owner": "Administrator", 

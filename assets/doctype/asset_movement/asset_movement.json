@@ -11,7 +11,7 @@
   "column_break_4",
   "transaction_date",
   "section_break_10",
-  "assets",
+  "asset",
   "reference",
   "reference_doctype",
   "column_break_9",
@@ -82,9 +82,9 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "assets",
+   "fieldname": "asset",
    "fieldtype": "Table",
-   "label": "Assets",
+   "label": "asset",
    "options": "Asset Movement Item",
    "reqd": 1
   },
@@ -98,7 +98,7 @@
  "links": [],
  "modified": "2023-06-28 16:54:26.571083",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Movement",
  "naming_rule": "Expression",
  "owner": "Administrator",

@@ -47,7 +47,7 @@ frappe.ui.form.on('Asset Value Adjustment', {
 	set_current_asset_value: function(frm) {
 		if (frm.doc.asset) {
 			frm.call({
-				method: "erpnext.assets.doctype.asset.asset.get_asset_value_after_depreciation",
+				method: "erpnext.asset.doctype.asset.asset.get_asset_value_after_depreciation",
 				args: {
 					asset_name: frm.doc.asset,
 					finance_book: frm.doc.finance_book

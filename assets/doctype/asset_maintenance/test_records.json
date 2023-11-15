@@ -62,7 +62,7 @@
     "is_fixed_asset": 1,
     "is_stock_item": 0,
     "asset_category": "Equipment",
-    "auto_create_assets": 1,
+    "auto_create_asset": 1,
     "asset_naming_series": "ABC.###"
   }
 ]

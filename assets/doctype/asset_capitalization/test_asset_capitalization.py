@@ -6,13 +6,13 @@ import unittest
 import frappe
 from frappe.utils import cint, flt, getdate, now_datetime
 
-from erpnext.assets.doctype.asset.depreciation import post_depreciation_entries
-from erpnext.assets.doctype.asset.test_asset import (
+from erpnext.asset.doctype.asset.depreciation import post_depreciation_entries
+from erpnext.asset.doctype.asset.test_asset import (
 	create_asset,
 	create_asset_data,
 	set_depreciation_settings_in_company,
 )
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_asset_depr_schedule_doc,
 )
 from erpnext.stock.doctype.item.test_item import create_item
@@ -308,7 +308,7 @@ class TestAssetCapitalization(unittest.TestCase):
 		depreciation_before_disposal_amount = 14_876.71
 		accumulated_depreciation = 44_876.71
 
-		# Create assets
+		# Create asset
 		consumed_asset = create_depreciation_asset(
 			asset_name="Asset Capitalization Consumable Asset",
 			asset_value=consumed_asset_purchase_value,

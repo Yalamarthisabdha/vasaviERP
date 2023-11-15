@@ -77,7 +77,7 @@
  "links": [],
  "modified": "2023-09-29 15:56:17.608643",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Activity",
  "owner": "Administrator",
  "permissions": [

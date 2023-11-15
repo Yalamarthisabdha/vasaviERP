@@ -58,7 +58,7 @@
  "links": [],
  "modified": "2023-04-06 02:24:20.375870",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Repair Consumed Item",
  "owner": "Administrator",
  "permissions": [],

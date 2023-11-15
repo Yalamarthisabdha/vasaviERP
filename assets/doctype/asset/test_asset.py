@@ -18,17 +18,17 @@ from frappe.utils import (
 
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
 from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
-from erpnext.assets.doctype.asset.asset import (
+from erpnext.asset.doctype.asset.asset import (
 	make_sales_invoice,
 	split_asset,
 	update_maintenance_status,
 )
-from erpnext.assets.doctype.asset.depreciation import (
+from erpnext.asset.doctype.asset.depreciation import (
 	post_depreciation_entries,
 	restore_asset,
 	scrap_asset,
 )
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	_check_is_pro_rata,
 	_get_pro_rata_amt,
 	get_asset_depr_schedule_doc,
@@ -41,7 +41,7 @@ from erpnext.stock.doctype.purchase_receipt.purchase_receipt import (
 from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_purchase_receipt
 
 
-class AssetSetup(unittest.TestCase):
+class assetetup(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		set_depreciation_settings_in_company()
@@ -55,7 +55,7 @@ class AssetSetup(unittest.TestCase):
 		frappe.db.rollback()
 
 
-class TestAsset(AssetSetup):
+class TestAsset(assetetup):
 	def test_asset_category_is_fetched(self):
 		"""Tests if the Item's Asset Category value is assigned to the Asset, if the field is empty."""
 
@@ -729,7 +729,7 @@ class TestAsset(AssetSetup):
 		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_account", cwip_acc)
 
 
-class TestDepreciationMethods(AssetSetup):
+class TestDepreciationMethods(assetetup):
 	def test_schedule_for_straight_line_method(self):
 		asset = create_asset(
 			calculate_depreciation=1,
@@ -993,7 +993,7 @@ class TestDepreciationMethods(AssetSetup):
 		self.assertEqual(schedules, expected_schedules)
 
 
-class TestDepreciationBasics(AssetSetup):
+class TestDepreciationBasics(assetetup):
 	def test_depreciation_without_pro_rata(self):
 		asset = create_asset(
 			item_code="Macbook Pro",
@@ -1807,7 +1807,7 @@ def create_asset_category():
 	asset_category.insert()
 
 
-def create_fixed_asset_item(item_code=None, auto_create_assets=1, is_grouped_asset=0):
+def create_fixed_asset_item(item_code=None, auto_create_asset=1, is_grouped_asset=0):
 	meta = frappe.get_meta("Asset")
 	naming_series = meta.get_field("naming_series").options.splitlines()[0] or "ACC-ASS-.YYYY.-"
 	try:
@@ -1822,7 +1822,7 @@ def create_fixed_asset_item(item_code=None, auto_create_assets=1, is_grouped_ass
 				"stock_uom": "Nos",
 				"is_stock_item": 0,
 				"is_fixed_asset": 1,
-				"auto_create_assets": auto_create_assets,
+				"auto_create_asset": auto_create_asset,
 				"is_grouped_asset": is_grouped_asset,
 				"asset_naming_series": naming_series,
 			}

@@ -58,7 +58,7 @@
  "max_attachments": 0, 
  "modified": "2018-06-20 04:35:59.514281", 
  "modified_by": "Administrator", 
- "module": "Assets", 
+ "module": "asset", 
  "name": "Linked Location", 
  "name_case": "", 
  "owner": "Administrator", 

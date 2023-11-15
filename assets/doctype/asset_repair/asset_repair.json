@@ -266,7 +266,7 @@
  "links": [],
  "modified": "2022-08-16 15:55:25.023471",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Repair",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",

@@ -1,10 +1,10 @@
 // Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
 
-frappe.provide("erpnext.assets");
+frappe.provide("erpnext.asset");
 
 
-erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.stock.StockController {
+erpnext.asset.AssetCapitalization = class AssetCapitalization extends erpnext.stock.StockController {
 	setup() {
 		this.frm.ignore_doctypes_on_cancel_all = ['Serial and Batch Bundle'];
 		this.setup_posting_date_time_check();
@@ -137,7 +137,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (asset) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_items_tagged_to_wip_composite_asset",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_items_tagged_to_wip_composite_asset",
 				args: {
 					asset: asset,
 				},
@@ -257,7 +257,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (me.frm.doc.target_item_code) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_target_item_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_target_item_details",
 				child: me.frm.doc,
 				args: {
 					item_code: me.frm.doc.target_item_code,
@@ -277,7 +277,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (me.frm.doc.target_asset) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_target_asset_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_target_asset_details",
 				child: me.frm.doc,
 				args: {
 					asset: me.frm.doc.target_asset,
@@ -297,7 +297,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (row && row.item_code) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_consumed_stock_item_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_consumed_stock_item_details",
 				child: row,
 				args: {
 					args: {
@@ -325,7 +325,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (row && row.asset) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_consumed_asset_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_consumed_asset_details",
 				child: row,
 				args: {
 					args: {
@@ -352,7 +352,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 
 		if (row && row.item_code) {
 			return me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_service_item_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_service_item_details",
 				child: row,
 				args: {
 					args: {
@@ -375,7 +375,7 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 		var me = this;
 		if (item.item_code && item.warehouse) {
 			me.frm.call({
-				method: "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_warehouse_details",
+				method: "erpnext.asset.doctype.asset_capitalization.asset_capitalization.get_warehouse_details",
 				child: item,
 				args: {
 					args: {
@@ -463,4 +463,4 @@ erpnext.assets.AssetCapitalization = class AssetCapitalization extends erpnext.s
 	}
 };
 
-cur_frm.cscript = new erpnext.assets.AssetCapitalization({frm: cur_frm});
+cur_frm.cscript = new erpnext.asset.AssetCapitalization({frm: cur_frm});

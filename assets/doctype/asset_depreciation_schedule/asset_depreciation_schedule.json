@@ -191,7 +191,7 @@
  "links": [],
  "modified": "2023-11-03 21:32:15.021796",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Depreciation Schedule",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",

@@ -20,14 +20,14 @@ from frappe.utils import (
 
 import erpnext
 from erpnext.accounts.general_ledger import make_reverse_gl_entries
-from erpnext.assets.doctype.asset.depreciation import (
+from erpnext.asset.doctype.asset.depreciation import (
 	get_comma_separated_links,
 	get_depreciation_accounts,
 	get_disposal_account_and_cost_center,
 )
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
-from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
+from erpnext.asset.doctype.asset_category.asset_category import get_asset_category_account
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	cancel_asset_depr_schedules,
 	convert_draft_asset_depr_schedules_into_active,
 	get_asset_depr_schedule_doc,
@@ -254,7 +254,7 @@ class Asset(AccountsController):
 			if not self.finance_books:
 				frappe.throw(_("Enter depreciation details"))
 			if self.is_fully_depreciated:
-				frappe.throw(_("Depreciation cannot be calculated for fully depreciated assets"))
+				frappe.throw(_("Depreciation cannot be calculated for fully depreciated asset"))
 
 		if self.is_existing_asset:
 			return
@@ -273,7 +273,7 @@ class Asset(AccountsController):
 				"Gross Purchase Amount should be <b>equal</b> to purchase amount of one single Asset."
 			)
 			error_message += "<br>"
-			error_message += _("Please do not book expense of multiple assets against one single Asset.")
+			error_message += _("Please do not book expense of multiple asset against one single Asset.")
 			frappe.throw(error_message, title=_("Invalid Gross Purchase Amount"))
 
 	def make_asset_movement(self):
@@ -285,7 +285,7 @@ class Asset(AccountsController):
 				reference_doctype, reference_docname, ["posting_date", "posting_time"]
 			)
 			transaction_date = get_datetime("{} {}".format(posting_date, posting_time))
-		assets = [
+		asset = [
 			{
 				"asset": self.name,
 				"asset_name": self.asset_name,
@@ -296,7 +296,7 @@ class Asset(AccountsController):
 		asset_movement = frappe.get_doc(
 			{
 				"doctype": "Asset Movement",
-				"assets": assets,
+				"asset": asset,
 				"purpose": "Receipt",
 				"company": self.company,
 				"transaction_date": transaction_date,
@@ -686,11 +686,11 @@ class Asset(AccountsController):
 
 
 def update_maintenance_status():
-	assets = frappe.get_all(
+	asset = frappe.get_all(
 		"Asset", filters={"docstatus": 1, "maintenance_required": 1, "disposal_date": ("is", "not set")}
 	)
 
-	for asset in assets:
+	for asset in asset:
 		asset = frappe.get_doc("Asset", asset.name)
 		if frappe.db.exists("Asset Repair", {"asset_name": asset.name, "repair_status": "Pending"}):
 			asset.set_status("Out of Order")
@@ -707,14 +707,14 @@ def make_post_gl_entry():
 
 	for asset_category in asset_categories:
 		if cint(asset_category.enable_cwip_accounting):
-			assets = frappe.db.sql_list(
+			asset = frappe.db.sql_list(
 				""" select name from `tabAsset`
 				where asset_category = %s and ifnull(booked_fixed_asset, 0) = 0
 				and available_for_use_date = %s""",
 				(asset_category.name, nowdate()),
 			)
 
-			for asset in assets:
+			for asset in asset:
 				doc = frappe.get_doc("Asset", asset)
 				doc.make_gl_entries()
 
@@ -902,22 +902,22 @@ def make_journal_entry(asset_name):
 
 
 @frappe.whitelist()
-def make_asset_movement(assets, purpose=None):
+def make_asset_movement(asset, purpose=None):
 	import json
 
-	if isinstance(assets, str):
-		assets = json.loads(assets)
+	if isinstance(asset, str):
+		asset = json.loads(asset)
 
-	if len(assets) == 0:
+	if len(asset) == 0:
 		frappe.throw(_("Atleast one asset has to be selected."))
 
 	asset_movement = frappe.new_doc("Asset Movement")
-	asset_movement.quantity = len(assets)
-	for asset in assets:
+	asset_movement.quantity = len(asset)
+	for asset in asset:
 		asset = frappe.get_doc("Asset", asset.get("name"))
 		asset_movement.company = asset.get("company")
 		asset_movement.append(
-			"assets",
+			"asset",
 			{
 				"asset": asset.get("name"),
 				"source_location": asset.get("location"),
@@ -925,7 +925,7 @@ def make_asset_movement(assets, purpose=None):
 			},
 		)
 
-	if asset_movement.get("assets"):
+	if asset_movement.get("asset"):
 		return asset_movement.as_dict()
 
 

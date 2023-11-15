@@ -1,7 +1,7 @@
 frappe.treeview_settings["Location"] = {
 	ignore_fields: ["parent_location"],
-	get_tree_nodes: 'erpnext.assets.doctype.location.location.get_children',
-	add_tree_node: 'erpnext.assets.doctype.location.location.add_node',
+	get_tree_nodes: 'erpnext.asset.doctype.location.location.get_children',
+	add_tree_node: 'erpnext.asset.doctype.location.location.add_node',
 	filters: [
 		{
 			fieldname: "location",
@@ -15,7 +15,7 @@ frappe.treeview_settings["Location"] = {
 			}
 		},
 	],
-	breadcrumb: "Assets",
+	breadcrumb: "asset",
 	root_label: "All Locations",
 	get_tree_root: false,
 	menu_items: [

@@ -6,7 +6,7 @@ import unittest
 import frappe
 from frappe.utils import now
 
-from erpnext.assets.doctype.asset.test_asset import create_asset_data
+from erpnext.asset.doctype.asset.test_asset import create_asset_data
 from erpnext.setup.doctype.employee.test_employee import make_employee
 from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_purchase_receipt
 
@@ -50,7 +50,7 @@ class TestAssetMovement(unittest.TestCase):
 		create_asset_movement(
 			purpose="Transfer",
 			company=asset.company,
-			assets=[
+			asset=[
 				{"asset": asset.name, "source_location": "Test Location", "target_location": "Test Location 2"}
 			],
 			reference_doctype="Purchase Receipt",
@@ -61,7 +61,7 @@ class TestAssetMovement(unittest.TestCase):
 		movement1 = create_asset_movement(
 			purpose="Transfer",
 			company=asset.company,
-			assets=[
+			asset=[
 				{"asset": asset.name, "source_location": "Test Location 2", "target_location": "Test Location"}
 			],
 			reference_doctype="Purchase Receipt",
@@ -76,7 +76,7 @@ class TestAssetMovement(unittest.TestCase):
 		create_asset_movement(
 			purpose="Issue",
 			company=asset.company,
-			assets=[{"asset": asset.name, "source_location": "Test Location 2", "to_employee": employee}],
+			asset=[{"asset": asset.name, "source_location": "Test Location 2", "to_employee": employee}],
 			reference_doctype="Purchase Receipt",
 			reference_name=pr.name,
 		)
@@ -88,7 +88,7 @@ class TestAssetMovement(unittest.TestCase):
 		create_asset_movement(
 			purpose="Receipt",
 			company=asset.company,
-			assets=[{"asset": asset.name, "from_employee": employee, "target_location": "Test Location"}],
+			asset=[{"asset": asset.name, "from_employee": employee, "target_location": "Test Location"}],
 			reference_doctype="Purchase Receipt",
 			reference_name=pr.name,
 		)
@@ -128,7 +128,7 @@ class TestAssetMovement(unittest.TestCase):
 		movement1 = create_asset_movement(
 			purpose="Transfer",
 			company=asset.company,
-			assets=[
+			asset=[
 				{"asset": asset.name, "source_location": "Test Location", "target_location": "Test Location 2"}
 			],
 			reference_doctype="Purchase Receipt",
@@ -149,7 +149,7 @@ def create_asset_movement(**args):
 	movement = frappe.new_doc("Asset Movement")
 	movement.update(
 		{
-			"assets": args.assets,
+			"asset": args.asset,
 			"transaction_date": args.transaction_date,
 			"company": args.company,
 			"purpose": args.purpose or "Receipt",

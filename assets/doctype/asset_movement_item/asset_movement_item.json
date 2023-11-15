@@ -75,7 +75,7 @@
  "istable": 1,
  "modified": "2019-10-09 15:59:08.265141",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Movement Item",
  "owner": "Administrator",
  "permissions": [],

@@ -233,12 +233,12 @@
    "depends_on": "eval:doc.docstatus == 0 || (doc.asset_items && doc.asset_items.length)",
    "fieldname": "section_break_26",
    "fieldtype": "Section Break",
-   "label": "Consumed Assets"
+   "label": "Consumed asset"
   },
   {
    "fieldname": "asset_items",
    "fieldtype": "Table",
-   "label": "Assets",
+   "label": "asset",
    "options": "Asset Capitalization Asset Item"
   },
   {
@@ -358,7 +358,7 @@
  "links": [],
  "modified": "2023-10-03 22:55:59.461456",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Capitalization",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",

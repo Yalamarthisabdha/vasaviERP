@@ -144,7 +144,7 @@
  "links": [],
  "modified": "2023-08-29 12:49:33.290527",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Location",
  "naming_rule": "By fieldname",
  "nsm_parent_field": "parent_location",

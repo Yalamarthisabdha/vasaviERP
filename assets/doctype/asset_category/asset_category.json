@@ -68,7 +68,7 @@
  "links": [],
  "modified": "2021-02-24 15:05:38.621803",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Category",
  "owner": "Administrator",
  "permissions": [

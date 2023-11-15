@@ -3,14 +3,14 @@
 
 frappe.ui.form.on('Asset Movement', {
 	setup: (frm) => {
-		frm.set_query("to_employee", "assets", (doc) => {
+		frm.set_query("to_employee", "asset", (doc) => {
 			return {
 				filters: {
 					company: doc.company
 				}
 			};
 		})
-		frm.set_query("from_employee", "assets", (doc) => {
+		frm.set_query("from_employee", "asset", (doc) => {
 			return {
 				filters: {
 					company: doc.company
@@ -32,7 +32,7 @@ frappe.ui.form.on('Asset Movement', {
 				}
 			};
 		}),
-		frm.set_query("asset", "assets", () => {
+		frm.set_query("asset", "asset", () => {
 			return {
 				filters: {
 					status: ["not in", ["Draft"]]
@@ -80,10 +80,10 @@ frappe.ui.form.on('Asset Movement', {
 				let property_to_be_altered = fieldnames_to_be_altered[fieldname];
 				Object.keys(property_to_be_altered).forEach(property => {
 					let value = property_to_be_altered[property];
-					frm.fields_dict['assets'].grid.update_docfield_property(fieldname, property, value);
+					frm.fields_dict['asset'].grid.update_docfield_property(fieldname, property, value);
 				});
 			});
-			frm.refresh_field('assets');
+			frm.refresh_field('asset');
 		}
 	}
 });

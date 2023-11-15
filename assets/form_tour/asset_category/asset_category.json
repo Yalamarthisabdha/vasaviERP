@@ -6,7 +6,7 @@
  "is_standard": 1,
  "modified": "2021-08-24 12:48:20.763173",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Asset Category",
  "owner": "Administrator",
  "reference_doctype": "Asset Category",

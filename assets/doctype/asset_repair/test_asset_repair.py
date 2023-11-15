@@ -6,16 +6,16 @@ import unittest
 import frappe
 from frappe.utils import flt, nowdate, nowtime, today
 
-from erpnext.assets.doctype.asset.asset import (
+from erpnext.asset.doctype.asset.asset import (
 	get_asset_account,
 	get_asset_value_after_depreciation,
 )
-from erpnext.assets.doctype.asset.test_asset import (
+from erpnext.asset.doctype.asset.test_asset import (
 	create_asset,
 	create_asset_data,
 	set_depreciation_settings_in_company,
 )
-from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
+from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_asset_depr_schedule_doc,
 )
 from erpnext.stock.doctype.item.test_item import create_item

@@ -10,16 +10,16 @@ from frappe import _
 from frappe.utils import cint, flt, get_link_to_form
 
 import erpnext
-from erpnext.assets.doctype.asset.asset import get_asset_value_after_depreciation
-from erpnext.assets.doctype.asset.depreciation import (
+from erpnext.asset.doctype.asset.asset import get_asset_value_after_depreciation
+from erpnext.asset.doctype.asset.depreciation import (
 	depreciate_asset,
 	get_gl_entries_on_asset_disposal,
 	get_value_after_depreciation_on_disposal_date,
 	reset_depreciation_schedule,
 	reverse_depreciation_entry_made_after_disposal,
 )
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
-from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
+from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
+from erpnext.asset.doctype.asset_category.asset_category import get_asset_category_account
 from erpnext.controllers.stock_controller import StockController
 from erpnext.setup.doctype.brand.brand import get_brand_defaults
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
@@ -444,7 +444,7 @@ class AssetCapitalization(StockController):
 	def get_gl_entries_for_consumed_asset_items(
 		self, gl_entries, target_account, target_against, precision
 	):
-		# Consumed Assets
+		# Consumed asset
 		for item in self.asset_items:
 			asset = frappe.get_doc("Asset", item.asset)
 

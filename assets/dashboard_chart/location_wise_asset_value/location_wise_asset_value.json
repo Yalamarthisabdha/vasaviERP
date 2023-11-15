@@ -12,7 +12,7 @@
  "is_standard": 1,
  "modified": "2020-10-28 23:16:07.883312",
  "modified_by": "Administrator",
- "module": "Assets",
+ "module": "asset",
  "name": "Location-wise Asset Value",
  "number_of_groups": 0,
  "owner": "Administrator",

@@ -15,8 +15,8 @@
  "is_complete": 0,
  "modified": "2021-12-02 11:24:37.963746",
  "modified_by": "Administrator",
- "module": "Assets",
- "name": "Assets",
+ "module": "asset",
+ "name": "asset",
  "owner": "Administrator",
  "steps": [
   {
@@ -35,7 +35,7 @@
    "step": "Existing Asset"
   }
  ],
- "subtitle": "Assets, Depreciations, Repairs, and more.",
- "success_message": "The Assets Module is all set up!",
- "title": "Let's Set Up the Assets Module."
+ "subtitle": "asset, Depreciations, Repairs, and more.",
+ "success_message": "The asset Module is all set up!",
+ "title": "Let's Set Up the asset Module."
 }
