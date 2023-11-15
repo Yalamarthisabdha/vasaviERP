@@ -19,14 +19,14 @@ from frappe.utils import (
 )
 
 import erpnext
-from erpnext.accounts.general_ledger import make_reverse_gl_entries
+from erpnext.accountss.general_ledger import make_reverse_gl_entries
 from erpnext.asset.doctype.asset.depreciation import (
 	get_comma_separated_links,
-	get_depreciation_accounts,
-	get_disposal_account_and_cost_center,
+	get_depreciation_accountss,
+	get_disposal_accounts_and_cost_center,
 )
 from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
-from erpnext.asset.doctype.asset_category.asset_category import get_asset_category_account
+from erpnext.asset.doctype.asset_category.asset_category import get_asset_category_accounts
 from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	cancel_asset_depr_schedules,
 	convert_draft_asset_depr_schedules_into_active,
@@ -36,10 +36,10 @@ from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedu
 	make_draft_asset_depr_schedules_if_not_present,
 	update_draft_asset_depr_schedules,
 )
-from erpnext.controllers.accounts_controller import AccountsController
+from erpnext.controllers.accountss_controller import AccountssController
 
 
-class Asset(AccountsController):
+class Asset(AccountssController):
 	def validate(self):
 		self.validate_asset_values()
 		self.validate_asset_and_reference()
@@ -231,7 +231,7 @@ class Asset(AccountsController):
 		if not flt(self.gross_purchase_amount) and not self.is_composite_asset:
 			frappe.throw(_("Gross Purchase Amount is mandatory"), frappe.MandatoryError)
 
-		if is_cwip_accounting_enabled(self.asset_category):
+		if is_cwip_accountsing_enabled(self.asset_category):
 			if not self.is_existing_asset and not (self.purchase_receipt or self.purchase_invoice):
 				frappe.throw(
 					_("Please create purchase receipt or purchase invoice for the item {0}").format(
@@ -505,7 +505,7 @@ class Asset(AccountsController):
 
 	@frappe.whitelist()
 	def get_manual_depreciation_entries(self):
-		(_, _, depreciation_expense_account) = get_depreciation_accounts(
+		(_, _, depreciation_expense_accounts) = get_depreciation_accountss(
 			self.asset_category, self.company
 		)
 
@@ -515,7 +515,7 @@ class Asset(AccountsController):
 			frappe.qb.from_(gle)
 			.select(gle.voucher_no.as_("name"), gle.debit.as_("value"), gle.posting_date)
 			.where(gle.against_voucher == self.name)
-			.where(gle.account == depreciation_expense_account)
+			.where(gle.accounts == depreciation_expense_accounts)
 			.where(gle.debit != 0)
 			.where(gle.is_cancelled == 0)
 			.orderby(gle.posting_date)
@@ -530,30 +530,30 @@ class Asset(AccountsController):
 			return False
 
 		asset_bought_with_invoice = purchase_document == self.purchase_invoice
-		fixed_asset_account = self.get_fixed_asset_account()
+		fixed_asset_accounts = self.get_fixed_asset_accounts()
 
-		cwip_enabled = is_cwip_accounting_enabled(self.asset_category)
-		cwip_account = self.get_cwip_account(cwip_enabled=cwip_enabled)
+		cwip_enabled = is_cwip_accountsing_enabled(self.asset_category)
+		cwip_accounts = self.get_cwip_accounts(cwip_enabled=cwip_enabled)
 
-		query = """SELECT name FROM `tabGL Entry` WHERE voucher_no = %s and account = %s"""
+		query = """SELECT name FROM `tabGL Entry` WHERE voucher_no = %s and accounts = %s"""
 		if asset_bought_with_invoice:
 			# with invoice purchase either expense or cwip has been booked
-			expense_booked = frappe.db.sql(query, (purchase_document, fixed_asset_account), as_dict=1)
+			expense_booked = frappe.db.sql(query, (purchase_document, fixed_asset_accounts), as_dict=1)
 			if expense_booked:
 				# if expense is already booked from invoice then do not make gl entries regardless of cwip enabled/disabled
 				return False
 
-			cwip_booked = frappe.db.sql(query, (purchase_document, cwip_account), as_dict=1)
+			cwip_booked = frappe.db.sql(query, (purchase_document, cwip_accounts), as_dict=1)
 			if cwip_booked:
 				# if cwip is booked from invoice then make gl entries regardless of cwip enabled/disabled
 				return True
 		else:
 			# with receipt purchase either cwip has been booked or no entries have been made
-			if not cwip_account:
-				# if cwip account isn't available do not make gl entries
+			if not cwip_accounts:
+				# if cwip accounts isn't available do not make gl entries
 				return False
 
-			cwip_booked = frappe.db.sql(query, (purchase_document, cwip_account), as_dict=1)
+			cwip_booked = frappe.db.sql(query, (purchase_document, cwip_accounts), as_dict=1)
 			# if cwip is not booked from receipt then do not make gl entries
 			# if cwip is booked from receipt then make gl entries
 			return cwip_booked
@@ -566,39 +566,39 @@ class Asset(AccountsController):
 
 		return purchase_document
 
-	def get_fixed_asset_account(self):
-		fixed_asset_account = get_asset_category_account(
-			"fixed_asset_account", None, self.name, None, self.asset_category, self.company
+	def get_fixed_asset_accounts(self):
+		fixed_asset_accounts = get_asset_category_accounts(
+			"fixed_asset_accounts", None, self.name, None, self.asset_category, self.company
 		)
-		if not fixed_asset_account:
+		if not fixed_asset_accounts:
 			frappe.throw(
 				_("Set {0} in asset category {1} for company {2}").format(
-					frappe.bold("Fixed Asset Account"),
+					frappe.bold("Fixed Asset Accounts"),
 					frappe.bold(self.asset_category),
 					frappe.bold(self.company),
 				),
-				title=_("Account not Found"),
+				title=_("Accounts not Found"),
 			)
-		return fixed_asset_account
+		return fixed_asset_accounts
 
-	def get_cwip_account(self, cwip_enabled=False):
-		cwip_account = None
+	def get_cwip_accounts(self, cwip_enabled=False):
+		cwip_accounts = None
 		try:
-			cwip_account = get_asset_account(
-				"capital_work_in_progress_account", self.name, self.asset_category, self.company
+			cwip_accounts = get_asset_accounts(
+				"capital_work_in_progress_accounts", self.name, self.asset_category, self.company
 			)
 		except Exception:
-			# if no cwip account found in category or company and "cwip is enabled" then raise else silently pass
+			# if no cwip accounts found in category or company and "cwip is enabled" then raise else silently pass
 			if cwip_enabled:
 				raise
 
-		return cwip_account
+		return cwip_accounts
 
 	def make_gl_entries(self):
 		gl_entries = []
 
 		purchase_document = self.get_purchase_document()
-		fixed_asset_account, cwip_account = self.get_fixed_asset_account(), self.get_cwip_account()
+		fixed_asset_accounts, cwip_accounts = self.get_fixed_asset_accounts(), self.get_cwip_accounts()
 
 		if (
 			purchase_document and self.purchase_receipt_amount and self.available_for_use_date <= nowdate()
@@ -607,12 +607,12 @@ class Asset(AccountsController):
 			gl_entries.append(
 				self.get_gl_dict(
 					{
-						"account": cwip_account,
-						"against": fixed_asset_account,
-						"remarks": self.get("remarks") or _("Accounting Entry for Asset"),
+						"accounts": cwip_accounts,
+						"against": fixed_asset_accounts,
+						"remarks": self.get("remarks") or _("Accountsing Entry for Asset"),
 						"posting_date": self.available_for_use_date,
 						"credit": self.purchase_receipt_amount,
-						"credit_in_account_currency": self.purchase_receipt_amount,
+						"credit_in_accounts_currency": self.purchase_receipt_amount,
 						"cost_center": self.cost_center,
 					},
 					item=self,
@@ -622,12 +622,12 @@ class Asset(AccountsController):
 			gl_entries.append(
 				self.get_gl_dict(
 					{
-						"account": fixed_asset_account,
-						"against": cwip_account,
-						"remarks": self.get("remarks") or _("Accounting Entry for Asset"),
+						"accounts": fixed_asset_accounts,
+						"against": cwip_accounts,
+						"remarks": self.get("remarks") or _("Accountsing Entry for Asset"),
 						"posting_date": self.available_for_use_date,
 						"debit": self.purchase_receipt_amount,
-						"debit_in_account_currency": self.purchase_receipt_amount,
+						"debit_in_accounts_currency": self.purchase_receipt_amount,
 						"cost_center": self.cost_center,
 					},
 					item=self,
@@ -635,7 +635,7 @@ class Asset(AccountsController):
 			)
 
 		if gl_entries:
-			from erpnext.accounts.general_ledger import make_gl_entries
+			from erpnext.accountss.general_ledger import make_gl_entries
 
 			make_gl_entries(gl_entries)
 			self.db_set("booked_fixed_asset", 1)
@@ -703,10 +703,10 @@ def update_maintenance_status():
 
 
 def make_post_gl_entry():
-	asset_categories = frappe.db.get_all("Asset Category", fields=["name", "enable_cwip_accounting"])
+	asset_categories = frappe.db.get_all("Asset Category", fields=["name", "enable_cwip_accountsing"])
 
 	for asset_category in asset_categories:
-		if cint(asset_category.enable_cwip_accounting):
+		if cint(asset_category.enable_cwip_accountsing):
 			asset = frappe.db.sql_list(
 				""" select name from `tabAsset`
 				where asset_category = %s and ifnull(booked_fixed_asset, 0) = 0
@@ -729,14 +729,14 @@ def make_sales_invoice(asset, item_code, company, serial_no=None):
 	si = frappe.new_doc("Sales Invoice")
 	si.company = company
 	si.currency = frappe.get_cached_value("Company", company, "default_currency")
-	disposal_account, depreciation_cost_center = get_disposal_account_and_cost_center(company)
+	disposal_accounts, depreciation_cost_center = get_disposal_accounts_and_cost_center(company)
 	si.append(
 		"items",
 		{
 			"item_code": item_code,
 			"is_fixed_asset": 1,
 			"asset": asset,
-			"income_account": disposal_account,
+			"income_accounts": disposal_accounts,
 			"serial_no": serial_no,
 			"cost_center": depreciation_cost_center,
 			"qty": 1,
@@ -829,34 +829,34 @@ def get_item_details(item_code, asset_category, gross_purchase_amount):
 	return books
 
 
-def get_asset_account(account_name, asset=None, asset_category=None, company=None):
-	account = None
+def get_asset_accounts(accounts_name, asset=None, asset_category=None, company=None):
+	accounts = None
 	if asset:
-		account = get_asset_category_account(
-			account_name, asset=asset, asset_category=asset_category, company=company
+		accounts = get_asset_category_accounts(
+			accounts_name, asset=asset, asset_category=asset_category, company=company
 		)
 
-	if not asset and not account:
-		account = get_asset_category_account(
-			account_name, asset_category=asset_category, company=company
+	if not asset and not accounts:
+		accounts = get_asset_category_accounts(
+			accounts_name, asset_category=asset_category, company=company
 		)
 
-	if not account:
-		account = frappe.get_cached_value("Company", company, account_name)
+	if not accounts:
+		accounts = frappe.get_cached_value("Company", company, accounts_name)
 
-	if not account:
+	if not accounts:
 		if not asset_category:
 			frappe.throw(
-				_("Set {0} in company {1}").format(account_name.replace("_", " ").title(), company)
+				_("Set {0} in company {1}").format(accounts_name.replace("_", " ").title(), company)
 			)
 		else:
 			frappe.throw(
 				_("Set {0} in asset category {1} or company {2}").format(
-					account_name.replace("_", " ").title(), asset_category, company
+					accounts_name.replace("_", " ").title(), asset_category, company
 				)
 			)
 
-	return account
+	return accounts
 
 
 @frappe.whitelist()
@@ -864,9 +864,9 @@ def make_journal_entry(asset_name):
 	asset = frappe.get_doc("Asset", asset_name)
 	(
 		_,
-		accumulated_depreciation_account,
-		depreciation_expense_account,
-	) = get_depreciation_accounts(asset.asset_category, asset.company)
+		accumulated_depreciation_accounts,
+		depreciation_expense_accounts,
+	) = get_depreciation_accountss(asset.asset_category, asset.company)
 
 	depreciation_cost_center, depreciation_series = frappe.get_cached_value(
 		"Company", asset.company, ["depreciation_cost_center", "series_for_depreciation_entry"]
@@ -880,9 +880,9 @@ def make_journal_entry(asset_name):
 	je.remark = ("Depreciation Entry against asset {0}").format(asset_name)
 
 	je.append(
-		"accounts",
+		"accountss",
 		{
-			"account": depreciation_expense_account,
+			"accounts": depreciation_expense_accounts,
 			"reference_type": "Asset",
 			"reference_name": asset.name,
 			"cost_center": depreciation_cost_center,
@@ -890,9 +890,9 @@ def make_journal_entry(asset_name):
 	)
 
 	je.append(
-		"accounts",
+		"accountss",
 		{
-			"account": accumulated_depreciation_account,
+			"accounts": accumulated_depreciation_accounts,
 			"reference_type": "Asset",
 			"reference_name": asset.name,
 		},
@@ -929,8 +929,8 @@ def make_asset_movement(asset, purpose=None):
 		return asset_movement.as_dict()
 
 
-def is_cwip_accounting_enabled(asset_category):
-	return cint(frappe.db.get_value("Asset Category", asset_category, "enable_cwip_accounting"))
+def is_cwip_accountsing_enabled(asset_category):
+	return cint(frappe.db.get_value("Asset Category", asset_category, "enable_cwip_accountsing"))
 
 
 @frappe.whitelist()
@@ -1098,35 +1098,35 @@ def create_new_asset_after_split(asset, split_qty):
 def add_reference_in_jv_on_split(entry_name, new_asset_name, old_asset_name, depreciation_amount):
 	journal_entry = frappe.get_doc("Journal Entry", entry_name)
 	entries_to_add = []
-	idx = len(journal_entry.get("accounts")) + 1
+	idx = len(journal_entry.get("accountss")) + 1
 
-	for account in journal_entry.get("accounts"):
-		if account.reference_name == old_asset_name:
-			entries_to_add.append(frappe.copy_doc(account).as_dict())
-			if account.credit:
-				account.credit = account.credit - depreciation_amount
-				account.credit_in_account_currency = (
-					account.credit_in_account_currency - account.exchange_rate * depreciation_amount
+	for accounts in journal_entry.get("accountss"):
+		if accounts.reference_name == old_asset_name:
+			entries_to_add.append(frappe.copy_doc(accounts).as_dict())
+			if accounts.credit:
+				accounts.credit = accounts.credit - depreciation_amount
+				accounts.credit_in_accounts_currency = (
+					accounts.credit_in_accounts_currency - accounts.exchange_rate * depreciation_amount
 				)
-			elif account.debit:
-				account.debit = account.debit - depreciation_amount
-				account.debit_in_account_currency = (
-					account.debit_in_account_currency - account.exchange_rate * depreciation_amount
+			elif accounts.debit:
+				accounts.debit = accounts.debit - depreciation_amount
+				accounts.debit_in_accounts_currency = (
+					accounts.debit_in_accounts_currency - accounts.exchange_rate * depreciation_amount
 				)
 
 	for entry in entries_to_add:
 		entry.reference_name = new_asset_name
 		if entry.credit:
 			entry.credit = depreciation_amount
-			entry.credit_in_account_currency = entry.exchange_rate * depreciation_amount
+			entry.credit_in_accounts_currency = entry.exchange_rate * depreciation_amount
 		elif entry.debit:
 			entry.debit = depreciation_amount
-			entry.debit_in_account_currency = entry.exchange_rate * depreciation_amount
+			entry.debit_in_accounts_currency = entry.exchange_rate * depreciation_amount
 
 		entry.idx = idx
 		idx += 1
 
-		journal_entry.append("accounts", entry)
+		journal_entry.append("accountss", entry)
 
 	journal_entry.flags.ignore_validate_update_after_submit = True
 	journal_entry.save()

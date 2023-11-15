@@ -11,11 +11,11 @@
   "asset_category_name",
   "column_break_3",
   "depreciation_options",
-  "enable_cwip_accounting",
+  "enable_cwip_accountsing",
   "finance_book_detail",
   "finance_books",
   "section_break_2",
-  "accounts"
+  "accountss"
  ],
  "fields": [
   {
@@ -44,13 +44,13 @@
   {
    "fieldname": "section_break_2",
    "fieldtype": "Section Break",
-   "label": "Accounts"
+   "label": "Accountss"
   },
   {
-   "fieldname": "accounts",
+   "fieldname": "accountss",
    "fieldtype": "Table",
-   "label": "Accounts",
-   "options": "Asset Category Account",
+   "label": "Accountss",
+   "options": "Asset Category Accounts",
    "reqd": 1
   },
   {
@@ -60,9 +60,9 @@
   },
   {
    "default": "0",
-   "fieldname": "enable_cwip_accounting",
+   "fieldname": "enable_cwip_accountsing",
    "fieldtype": "Check",
-   "label": "Enable Capital Work in Progress Accounting"
+   "label": "Enable Capital Work in Progress Accountsing"
   }
  ],
  "links": [],
@@ -81,7 +81,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts User",
+   "role": "Accountss User",
    "share": 1,
    "write": 1
   },
@@ -94,7 +94,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts Manager",
+   "role": "Accountss Manager",
    "share": 1,
    "write": 1
   },

@@ -1,7 +1,7 @@
 {
  "allow_roles": [
   {
-   "role": "Accounts User"
+   "role": "Accountss User"
   },
   {
    "role": "Maintenance User"
@@ -20,7 +20,7 @@
  "owner": "Administrator",
  "steps": [
   {
-   "step": "Fixed Asset Accounts"
+   "step": "Fixed Asset Accountss"
   },
   {
    "step": "Asset Category"

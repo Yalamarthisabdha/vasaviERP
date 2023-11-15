@@ -51,7 +51,7 @@ class TestAssetMaintenance(unittest.TestCase):
 			}
 		).insert()
 
-		next_due_date = calculate_next_due_date(nowdate(), "Monthly")
+		next_due_date = calculate_next_due_date(nowdate(), "mounth")
 		self.assertEqual(asset_maintenance.asset_maintenance_tasks[0].next_due_date, next_due_date)
 
 		asset_maintenance_log = frappe.db.get_value(
@@ -69,7 +69,7 @@ class TestAssetMaintenance(unittest.TestCase):
 		)
 
 		asset_maintenance_log_doc.save()
-		next_due_date = calculate_next_due_date(asset_maintenance_log_doc.completion_date, "Monthly")
+		next_due_date = calculate_next_due_date(asset_maintenance_log_doc.completion_date, "mounth")
 
 		asset_maintenance.reload()
 		self.assertEqual(asset_maintenance.asset_maintenance_tasks[0].next_due_date, next_due_date)
@@ -80,7 +80,7 @@ def get_maintenance_tasks():
 		{
 			"maintenance_task": "Change Oil",
 			"start_date": nowdate(),
-			"periodicity": "Monthly",
+			"periodicity": "mounth",
 			"maintenance_type": "Preventive Maintenance",
 			"maintenance_status": "Planned",
 			"assign_to": "marcus@abc.com",
@@ -98,11 +98,11 @@ def get_maintenance_tasks():
 
 def set_depreciation_settings_in_company():
 	company = frappe.get_doc("Company", "_Test Company")
-	company.accumulated_depreciation_account = "_Test Accumulated Depreciations - _TC"
-	company.depreciation_expense_account = "_Test Depreciations - _TC"
-	company.disposal_account = "_Test Gain/Loss on Asset Disposal - _TC"
+	company.accumulated_depreciation_accounts = "_Test Accumulated Depreciations - _TC"
+	company.depreciation_expense_accounts = "_Test Depreciations - _TC"
+	company.disposal_accounts = "_Test Gain/Loss on Asset Disposal - _TC"
 	company.depreciation_cost_center = "_Test Cost Center - _TC"
 	company.save()
 
 	# Enable booking asset depreciation entry automatically
-	frappe.db.set_single_value("Accounts Settings", "book_asset_depreciation_entry_automatically", 1)
+	frappe.db.set_single_value("Accountss Settings", "book_asset_depreciation_entry_automatically", 1)

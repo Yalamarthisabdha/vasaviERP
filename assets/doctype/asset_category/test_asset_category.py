@@ -16,12 +16,12 @@ class TestAssetCategory(unittest.TestCase):
 		asset_category.total_number_of_depreciations = 3
 		asset_category.frequency_of_depreciation = 3
 		asset_category.append(
-			"accounts",
+			"accountss",
 			{
 				"company_name": "_Test Company",
-				"fixed_asset_account": "_Test Fixed Asset - _TC",
-				"accumulated_depreciation_account": "_Test Accumulated Depreciations - _TC",
-				"depreciation_expense_account": "_Test Depreciations - _TC",
+				"fixed_asset_accounts": "_Test Fixed Asset - _TC",
+				"accumulated_depreciation_accounts": "_Test Accumulated Depreciations - _TC",
+				"depreciation_expense_accounts": "_Test Depreciations - _TC",
 			},
 		)
 
@@ -30,25 +30,25 @@ class TestAssetCategory(unittest.TestCase):
 		except frappe.DuplicateEntryError:
 			pass
 
-	def test_cwip_accounting(self):
+	def test_cwip_accountsing(self):
 		company_cwip_acc = frappe.db.get_value(
-			"Company", "_Test Company", "capital_work_in_progress_account"
+			"Company", "_Test Company", "capital_work_in_progress_accounts"
 		)
-		frappe.db.set_value("Company", "_Test Company", "capital_work_in_progress_account", "")
+		frappe.db.set_value("Company", "_Test Company", "capital_work_in_progress_accounts", "")
 
 		asset_category = frappe.new_doc("Asset Category")
 		asset_category.asset_category_name = "Computers"
-		asset_category.enable_cwip_accounting = 1
+		asset_category.enable_cwip_accountsing = 1
 
 		asset_category.total_number_of_depreciations = 3
 		asset_category.frequency_of_depreciation = 3
 		asset_category.append(
-			"accounts",
+			"accountss",
 			{
 				"company_name": "_Test Company",
-				"fixed_asset_account": "_Test Fixed Asset - _TC",
-				"accumulated_depreciation_account": "_Test Accumulated Depreciations - _TC",
-				"depreciation_expense_account": "_Test Depreciations - _TC",
+				"fixed_asset_accounts": "_Test Fixed Asset - _TC",
+				"accumulated_depreciation_accounts": "_Test Accumulated Depreciations - _TC",
+				"depreciation_expense_accounts": "_Test Depreciations - _TC",
 			},
 		)
 

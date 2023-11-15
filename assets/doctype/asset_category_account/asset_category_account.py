@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class AssetCategoryAccount(Document):
+class AssetCategoryAccounts(Document):
 	pass

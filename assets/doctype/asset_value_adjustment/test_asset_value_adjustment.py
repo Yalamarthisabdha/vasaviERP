@@ -98,9 +98,9 @@ class TestAssetValueAdjustment(unittest.TestCase):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Journal Entry' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			adj_doc.journal_entry,
 		)
 

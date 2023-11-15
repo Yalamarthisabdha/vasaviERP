@@ -25,19 +25,19 @@
    "title": "Asset Category Name"
   },
   {
-   "description": "Check to enable Capital Work in Progress accounting",
+   "description": "Check to enable Capital Work in Progress accountsing",
    "field": "",
-   "fieldname": "enable_cwip_accounting",
+   "fieldname": "enable_cwip_accountsing",
    "fieldtype": "Check",
    "has_next_condition": 0,
    "is_table_field": 0,
-   "label": "Enable Capital Work in Progress Accounting",
+   "label": "Enable Capital Work in Progress Accountsing",
    "parent_field": "",
    "position": "Bottom",
-   "title": "Enable CWIP Accounting"
+   "title": "Enable CWIP Accountsing"
   },
   {
-   "description": "Add a row to define Depreciation Method and other details. Note that you can leave Finance Book blank to have it's accounting done in the primary books of accounts.",
+   "description": "Add a row to define Depreciation Method and other details. Note that you can leave Finance Book blank to have it's accountsing done in the primary books of accountss.",
    "field": "",
    "fieldname": "finance_books",
    "fieldtype": "Table",
@@ -49,16 +49,16 @@
    "title": "Finance Book Detail"
   },
   {
-   "description": "Select the Fixed Asset and Depreciation accounts applicable for this Asset Category type",
+   "description": "Select the Fixed Asset and Depreciation accountss applicable for this Asset Category type",
    "field": "",
-   "fieldname": "accounts",
+   "fieldname": "accountss",
    "fieldtype": "Table",
    "has_next_condition": 0,
    "is_table_field": 0,
-   "label": "Accounts",
+   "label": "Accountss",
    "parent_field": "",
    "position": "Bottom",
-   "title": "Accounts"
+   "title": "Accountss"
   }
  ],
  "title": "Asset Category"

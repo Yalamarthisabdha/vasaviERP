@@ -28,7 +28,7 @@
   "custodian",
   "department",
   "disposal_date",
-  "accounting_dimensions_section",
+  "accountsing_dimensions_section",
   "cost_center",
   "dimension_col_break",
   "purchase_details_section",
@@ -444,9 +444,9 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "accounting_dimensions_section",
+   "fieldname": "accountsing_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "label": "Accountsing Dimensions"
   },
   {
    "fieldname": "dimension_col_break",
@@ -564,7 +564,7 @@
    "group": "Journal Entry",
    "link_doctype": "Journal Entry",
    "link_fieldname": "reference_name",
-   "table_fieldname": "accounts"
+   "table_fieldname": "accountss"
   },
   {
    "group": "Asset Capitalization",
@@ -590,7 +590,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts User",
+   "role": "Accountss User",
    "share": 1,
    "submit": 1,
    "write": 1

@@ -66,7 +66,7 @@ class TestAssetCapitalization(unittest.TestCase):
 			consumed_asset=consumed_asset.name,
 			service_qty=service_qty,
 			service_rate=service_rate,
-			service_expense_account="Expenses Included In Asset Valuation - TCP1",
+			service_expense_accounts="Expenses Included In Asset Valuation - TCP1",
 			company=company,
 			submit=1,
 		)
@@ -156,7 +156,7 @@ class TestAssetCapitalization(unittest.TestCase):
 			consumed_asset=consumed_asset.name,
 			service_qty=service_qty,
 			service_rate=service_rate,
-			service_expense_account="Expenses Included In Asset Valuation - _TC",
+			service_expense_accounts="Expenses Included In Asset Valuation - _TC",
 			company=company,
 			submit=1,
 		)
@@ -187,11 +187,11 @@ class TestAssetCapitalization(unittest.TestCase):
 		self.assertEqual(consumed_asset.db_get("status"), "Capitalized")
 
 		# Test General Ledger Entries
-		default_expense_account = frappe.db.get_value("Company", company, "default_expense_account")
+		default_expense_accounts = frappe.db.get_value("Company", company, "default_expense_accounts")
 		expected_gle = {
 			"_Test Fixed Asset - _TC": 3000,
 			"Expenses Included In Asset Valuation - _TC": -1000,
-			default_expense_account: -2000,
+			default_expense_accounts: -2000,
 		}
 		actual_gle = get_actual_gle_dict(asset_capitalization.name)
 
@@ -238,7 +238,7 @@ class TestAssetCapitalization(unittest.TestCase):
 			target_asset_location="Test Location",
 			stock_qty=stock_qty,
 			stock_rate=stock_rate,
-			service_expense_account="Expenses Included In Asset Valuation - TCP1",
+			service_expense_accounts="Expenses Included In Asset Valuation - TCP1",
 			company=company,
 			submit=1,
 		)
@@ -481,7 +481,7 @@ def create_asset_capitalization(**args):
 			"service_items",
 			{
 				"item_code": args.service_item or "Capitalization Source Service Item",
-				"expense_account": args.service_expense_account,
+				"expense_accounts": args.service_expense_accounts,
 				"qty": flt(args.service_qty) or 1,
 				"rate": flt(args.service_rate),
 			},
@@ -559,10 +559,10 @@ def get_actual_gle_dict(name):
 	return dict(
 		frappe.db.sql(
 			"""
-		select account, sum(debit-credit) as diff
+		select accounts, sum(debit-credit) as diff
 		from `tabGL Entry`
 		where voucher_type = 'Asset Capitalization' and voucher_no = %s
-		group by account
+		group by accounts
 		having diff != 0
 	""",
 			name,

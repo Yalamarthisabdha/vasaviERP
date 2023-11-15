@@ -7,7 +7,7 @@ import frappe
 from frappe.utils import flt, nowdate, nowtime, today
 
 from erpnext.asset.doctype.asset.asset import (
-	get_asset_account,
+	get_asset_accounts,
 	get_asset_value_after_depreciation,
 )
 from erpnext.asset.doctype.asset.test_asset import (
@@ -141,12 +141,12 @@ class TestAssetRepair(unittest.TestCase):
 
 		asset_category = frappe.get_doc("Asset Category", "Computers")
 		asset_category.append(
-			"accounts",
+			"accountss",
 			{
 				"company_name": "_Test Company with perpetual inventory",
-				"fixed_asset_account": "_Test Fixed Asset - TCP1",
-				"accumulated_depreciation_account": "_Test Accumulated Depreciations - TCP1",
-				"depreciation_expense_account": "_Test Depreciations - TCP1",
+				"fixed_asset_accounts": "_Test Fixed Asset - TCP1",
+				"accumulated_depreciation_accounts": "_Test Accumulated Depreciations - TCP1",
+				"depreciation_expense_accounts": "_Test Depreciations - TCP1",
 			},
 		)
 		asset_category.save()
@@ -162,7 +162,7 @@ class TestAssetRepair(unittest.TestCase):
 		gl_entries = frappe.db.sql(
 			"""
 			select
-				account,
+				accounts,
 				sum(debit) as debit,
 				sum(credit) as credit
 			from `tabGL Entry`
@@ -170,7 +170,7 @@ class TestAssetRepair(unittest.TestCase):
 				voucher_type='Asset Repair'
 				and voucher_no=%s
 			group by
-				account
+				accounts
 		""",
 			asset_repair.name,
 			as_dict=1,
@@ -178,29 +178,29 @@ class TestAssetRepair(unittest.TestCase):
 
 		self.assertTrue(gl_entries)
 
-		fixed_asset_account = get_asset_account(
-			"fixed_asset_account", asset=asset_repair.asset, company=asset_repair.company
+		fixed_asset_accounts = get_asset_accounts(
+			"fixed_asset_accounts", asset=asset_repair.asset, company=asset_repair.company
 		)
-		pi_expense_account = (
-			frappe.get_doc("Purchase Invoice", asset_repair.purchase_invoice).items[0].expense_account
+		pi_expense_accounts = (
+			frappe.get_doc("Purchase Invoice", asset_repair.purchase_invoice).items[0].expense_accounts
 		)
-		stock_entry_expense_account = (
-			frappe.get_doc("Stock Entry", asset_repair.stock_entry).get("items")[0].expense_account
+		stock_entry_expense_accounts = (
+			frappe.get_doc("Stock Entry", asset_repair.stock_entry).get("items")[0].expense_accounts
 		)
 
 		expected_values = {
-			fixed_asset_account: [asset_repair.total_repair_cost, 0],
-			pi_expense_account: [0, asset_repair.repair_cost],
-			stock_entry_expense_account: [0, 100],
+			fixed_asset_accounts: [asset_repair.total_repair_cost, 0],
+			pi_expense_accounts: [0, asset_repair.repair_cost],
+			stock_entry_expense_accounts: [0, 100],
 		}
 
 		for d in gl_entries:
-			self.assertEqual(expected_values[d.account][0], d.debit)
-			self.assertEqual(expected_values[d.account][1], d.credit)
+			self.assertEqual(expected_values[d.accounts][0], d.debit)
+			self.assertEqual(expected_values[d.accounts][1], d.credit)
 
 	def test_gl_entries_with_periodical_inventory(self):
 		frappe.db.set_value(
-			"Company", "_Test Company", "default_expense_account", "Cost of Goods Sold - _TC"
+			"Company", "_Test Company", "default_expense_accounts", "Cost of Goods Sold - _TC"
 		)
 		asset_repair = create_asset_repair(
 			capitalize_repair_cost=1,
@@ -211,7 +211,7 @@ class TestAssetRepair(unittest.TestCase):
 		gl_entries = frappe.db.sql(
 			"""
 			select
-				account,
+				accounts,
 				sum(debit) as debit,
 				sum(credit) as credit
 			from `tabGL Entry`
@@ -219,7 +219,7 @@ class TestAssetRepair(unittest.TestCase):
 				voucher_type='Asset Repair'
 				and voucher_no=%s
 			group by
-				account
+				accounts
 		""",
 			asset_repair.name,
 			as_dict=1,
@@ -227,18 +227,18 @@ class TestAssetRepair(unittest.TestCase):
 
 		self.assertTrue(gl_entries)
 
-		fixed_asset_account = get_asset_account(
-			"fixed_asset_account", asset=asset_repair.asset, company=asset_repair.company
+		fixed_asset_accounts = get_asset_accounts(
+			"fixed_asset_accounts", asset=asset_repair.asset, company=asset_repair.company
 		)
-		default_expense_account = frappe.get_cached_value(
-			"Company", asset_repair.company, "default_expense_account"
+		default_expense_accounts = frappe.get_cached_value(
+			"Company", asset_repair.company, "default_expense_accounts"
 		)
 
-		expected_values = {fixed_asset_account: [1100, 0], default_expense_account: [0, 1100]}
+		expected_values = {fixed_asset_accounts: [1100, 0], default_expense_accounts: [0, 1100]}
 
 		for d in gl_entries:
-			self.assertEqual(expected_values[d.account][0], d.debit)
-			self.assertEqual(expected_values[d.account][1], d.credit)
+			self.assertEqual(expected_values[d.accounts][0], d.debit)
+			self.assertEqual(expected_values[d.accounts][1], d.credit)
 
 	def test_increase_in_asset_life(self):
 		asset = create_asset(calculate_depreciation=1, submit=1)
@@ -268,7 +268,7 @@ def num_of_depreciations(asset):
 
 
 def create_asset_repair(**args):
-	from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
+	from erpnext.accountss.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
 	from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 
 	args = frappe._dict(args)
@@ -352,7 +352,7 @@ def create_asset_repair(**args):
 				asset_repair.increase_in_asset_life = 12
 			pi = make_purchase_invoice(
 				company=asset.company,
-				expense_account=frappe.db.get_value("Company", asset.company, "default_expense_account"),
+				expense_accounts=frappe.db.get_value("Company", asset.company, "default_expense_accounts"),
 				cost_center=asset_repair.cost_center,
 				warehouse=asset_repair.warehouse,
 			)

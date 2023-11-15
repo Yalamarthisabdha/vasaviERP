@@ -15,10 +15,10 @@
   "current_asset_value",
   "asset_value",
   "column_break_9",
-  "accounting_dimensions_section",
+  "accountsing_dimensions_section",
   "cost_center",
   "dimension_col_break",
-  "fixed_asset_account"
+  "fixed_asset_accounts"
  ],
  "fields": [
   {
@@ -76,10 +76,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "fixed_asset_account",
+   "fieldname": "fixed_asset_accounts",
    "fieldtype": "Link",
-   "label": "Fixed Asset Account",
-   "options": "Account",
+   "label": "Fixed Asset Accounts",
+   "options": "Accounts",
    "read_only": 1
   },
   {
@@ -90,9 +90,9 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "accounting_dimensions_section",
+   "fieldname": "accountsing_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "label": "Accountsing Dimensions"
   },
   {
    "fieldname": "dimension_col_break",

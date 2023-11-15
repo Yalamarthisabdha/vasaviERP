@@ -16,6 +16,6 @@
  "name": "Asset Value",
  "owner": "Administrator",
  "show_percentage_stats": 1,
- "stats_time_interval": "Monthly",
- "type": "Document Type"
+ "stats_time_interval": "mounth",
+ "type": "document tpy"
 }

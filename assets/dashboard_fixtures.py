@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 from frappe.utils import get_date_str, nowdate
 
-from erpnext.accounts.dashboard_fixtures import _get_fiscal_year
+from erpnext.accountss.dashboard_fixtures import _get_fiscal_year
 from erpnext.buying.dashboard_fixtures import get_company_for_dashboards
 
 
@@ -58,7 +58,7 @@ def get_charts(fiscal_year, year_start_date, year_end_date):
 			"chart_type": "Report",
 			"report_name": "Fixed Asset Register",
 			"is_custom": 1,
-			"group_by_type": "Count",
+			"group_by_type": "counts",
 			"number_of_groups": 0,
 			"is_public": 0,
 			"timespan": "Last Year",
@@ -152,22 +152,22 @@ def get_number_cards(fiscal_year, year_start_date, year_end_date):
 		{
 			"name": "Total asset",
 			"label": _("Total asset"),
-			"function": "Count",
+			"function": "counts",
 			"document_type": "Asset",
 			"is_public": 1,
 			"show_percentage_stats": 1,
-			"stats_time_interval": "Monthly",
+			"stats_time_interval": "mounth",
 			"filters_json": "[]",
 			"doctype": "Number Card",
 		},
 		{
 			"name": "New asset (This Year)",
 			"label": _("New asset (This Year)"),
-			"function": "Count",
+			"function": "counts",
 			"document_type": "Asset",
 			"is_public": 1,
 			"show_percentage_stats": 1,
-			"stats_time_interval": "Monthly",
+			"stats_time_interval": "mounth",
 			"filters_json": json.dumps(
 				[["Asset", "creation", "between", [year_start_date, year_end_date]]]
 			),
@@ -181,7 +181,7 @@ def get_number_cards(fiscal_year, year_start_date, year_end_date):
 			"document_type": "Asset",
 			"is_public": 1,
 			"show_percentage_stats": 1,
-			"stats_time_interval": "Monthly",
+			"stats_time_interval": "mounth",
 			"filters_json": "[]",
 			"doctype": "Number Card",
 		},

@@ -99,10 +99,10 @@ erpnext.asset.AssetCapitalization = class AssetCapitalization extends erpnext.st
 			}
 		});
 
-		me.frm.set_query('expense_account', 'service_items', function() {
+		me.frm.set_query('expense_accounts', 'service_items', function() {
 			return {
 				filters: {
-					"account_type": ['in', ["Tax", "Expense Account", "Income Account", "Expenses Included In Valuation", "Expenses Included In Asset Valuation"]],
+					"accounts_type": ['in', ["Tax", "Expense Accounts", "Income Accounts", "Expenses Included In Valuation", "Expenses Included In Asset Valuation"]],
 					"is_group": 0,
 					"company": me.frm.doc.company
 				}
@@ -237,19 +237,19 @@ erpnext.asset.AssetCapitalization = class AssetCapitalization extends erpnext.st
 			});
 		}
 
-		erpnext.accounts.dimensions.update_dimension(me.frm, me.frm.doctype);
+		erpnext.accountss.dimensions.update_dimension(me.frm, me.frm.doctype);
 	}
 
 	stock_items_add(doc, cdt, cdn) {
-		erpnext.accounts.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'stock_items');
+		erpnext.accountss.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'stock_items');
 	}
 
 	asset_items_add(doc, cdt, cdn) {
-		erpnext.accounts.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'asset_items');
+		erpnext.accountss.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'asset_items');
 	}
 
 	serivce_items_add(doc, cdt, cdn) {
-		erpnext.accounts.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'service_items');
+		erpnext.accountss.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'service_items');
 	}
 
 	get_target_item_details() {
@@ -358,7 +358,7 @@ erpnext.asset.AssetCapitalization = class AssetCapitalization extends erpnext.st
 					args: {
 						item_code: row.item_code,
 						qty: flt(row.qty),
-						expense_account: row.expense_account,
+						expense_accounts: row.expense_accounts,
 						company: me.frm.doc.company,
 					}
 				},

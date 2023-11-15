@@ -9,12 +9,12 @@ from frappe import _
 from frappe.query_builder.functions import IfNull, Sum
 from frappe.utils import add_months, cstr, flt, formatdate, getdate, nowdate, today
 
-from erpnext.accounts.report.financial_statements import (
+from erpnext.accountss.report.financial_statements import (
 	get_fiscal_year_data,
 	get_period_list,
 	validate_fiscal_year,
 )
-from erpnext.accounts.utils import get_fiscal_year
+from erpnext.accountss.utils import get_fiscal_year
 from erpnext.asset.doctype.asset.asset import get_asset_value_after_depreciation
 
 
@@ -176,7 +176,7 @@ def prepare_chart_data(data, filters):
 		filters_from_date,
 		filters_to_date,
 		filters_filter_based_on,
-		"Monthly",
+		"mounth",
 		company=filters.company,
 		ignore_fiscal_year=True,
 	)
@@ -247,7 +247,7 @@ def get_asset_depreciation_amount_map(filters, finance_book):
 
 	asset = frappe.qb.DocType("Asset")
 	gle = frappe.qb.DocType("GL Entry")
-	aca = frappe.qb.DocType("Asset Category Account")
+	aca = frappe.qb.DocType("Asset Category Accounts")
 	company = frappe.qb.DocType("Company")
 
 	query = (
@@ -260,7 +260,7 @@ def get_asset_depreciation_amount_map(filters, finance_book):
 		.on(company.name == asset.company)
 		.select(asset.name.as_("asset"), Sum(gle.debit).as_("depreciation_amount"))
 		.where(
-			gle.account == IfNull(aca.depreciation_expense_account, company.depreciation_expense_account)
+			gle.accounts == IfNull(aca.depreciation_expense_accounts, company.depreciation_expense_accounts)
 		)
 		.where(gle.debit != 0)
 		.where(gle.is_cancelled == 0)

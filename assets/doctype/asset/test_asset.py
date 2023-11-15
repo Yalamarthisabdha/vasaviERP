@@ -16,8 +16,8 @@ from frappe.utils import (
 	nowdate,
 )
 
-from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
-from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
+from erpnext.accountss.doctype.journal_entry.test_journal_entry import make_journal_entry
+from erpnext.accountss.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
 from erpnext.asset.doctype.asset.asset import (
 	make_sales_invoice,
 	split_asset,
@@ -46,7 +46,7 @@ class assetetup(unittest.TestCase):
 	def setUpClass(cls):
 		set_depreciation_settings_in_company()
 		create_asset_data()
-		enable_cwip_accounting("Computers")
+		enable_cwip_accountsing("Computers")
 		make_purchase_receipt(item_code="Macbook Pro", qty=1, rate=100000.0, location="Test Location")
 		frappe.db.sql("delete from `tabTax Rule`")
 
@@ -150,9 +150,9 @@ class TestAsset(assetetup):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Purchase Invoice' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			pi.name,
 		)
 		self.assertSequenceEqual(gle, expected_gle)
@@ -265,9 +265,9 @@ class TestAsset(assetetup):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Journal Entry' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			asset.journal_entry_for_scrap,
 		)
 		self.assertSequenceEqual(gle, expected_gle)
@@ -346,9 +346,9 @@ class TestAsset(assetetup):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Sales Invoice' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			si.name,
 		)
 
@@ -358,7 +358,7 @@ class TestAsset(assetetup):
 		self.assertEqual(frappe.db.get_value("Asset", asset.name, "status"), "Partially Depreciated")
 
 	def test_gle_made_by_asset_sale_for_existing_asset(self):
-		from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
+		from erpnext.accountss.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 
 		asset = create_asset(
 			calculate_depreciation=1,
@@ -426,9 +426,9 @@ class TestAsset(assetetup):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Sales Invoice' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			si.name,
 		)
 
@@ -516,15 +516,15 @@ class TestAsset(assetetup):
 		journal_entry = depr_schedule_of_asset[0].journal_entry
 
 		jv = frappe.get_doc("Journal Entry", journal_entry)
-		self.assertEqual(jv.accounts[0].credit_in_account_currency, 16000)
-		self.assertEqual(jv.accounts[1].debit_in_account_currency, 16000)
-		self.assertEqual(jv.accounts[2].credit_in_account_currency, 4000)
-		self.assertEqual(jv.accounts[3].debit_in_account_currency, 4000)
+		self.assertEqual(jv.accountss[0].credit_in_accounts_currency, 16000)
+		self.assertEqual(jv.accountss[1].debit_in_accounts_currency, 16000)
+		self.assertEqual(jv.accountss[2].credit_in_accounts_currency, 4000)
+		self.assertEqual(jv.accountss[3].debit_in_accounts_currency, 4000)
 
-		self.assertEqual(jv.accounts[0].reference_name, asset.name)
-		self.assertEqual(jv.accounts[1].reference_name, asset.name)
-		self.assertEqual(jv.accounts[2].reference_name, new_asset.name)
-		self.assertEqual(jv.accounts[3].reference_name, new_asset.name)
+		self.assertEqual(jv.accountss[0].reference_name, asset.name)
+		self.assertEqual(jv.accountss[1].reference_name, asset.name)
+		self.assertEqual(jv.accountss[2].reference_name, new_asset.name)
+		self.assertEqual(jv.accountss[3].reference_name, new_asset.name)
 
 	def test_expense_head(self):
 		pr = make_purchase_receipt(
@@ -532,10 +532,10 @@ class TestAsset(assetetup):
 		)
 		doc = make_invoice(pr.name)
 
-		self.assertEqual("Asset Received But Not Billed - _TC", doc.items[0].expense_account)
+		self.assertEqual("Asset Received But Not Billed - _TC", doc.items[0].expense_accounts)
 
 	# Capital Work In Progress
-	def test_cwip_accounting(self):
+	def test_cwip_accountsing(self):
 		pr = make_purchase_receipt(
 			item_code="Macbook Pro", qty=1, rate=5000, do_not_submit=True, location="Test Location"
 		)
@@ -547,8 +547,8 @@ class TestAsset(assetetup):
 					"category": "Total",
 					"add_deduct_tax": "Add",
 					"charge_type": "On Net Total",
-					"account_head": "_Test Account Service Tax - _TC",
-					"description": "_Test Account Service Tax",
+					"accounts_head": "_Test Accounts Service Tax - _TC",
+					"description": "_Test Accounts Service Tax",
 					"cost_center": "Main - _TC",
 					"rate": 5.0,
 				},
@@ -556,8 +556,8 @@ class TestAsset(assetetup):
 					"category": "Valuation and Total",
 					"add_deduct_tax": "Add",
 					"charge_type": "On Net Total",
-					"account_head": "_Test Account Shipping Charges - _TC",
-					"description": "_Test Account Shipping Charges",
+					"accounts_head": "_Test Accounts Shipping Charges - _TC",
+					"description": "_Test Accounts Shipping Charges",
 					"cost_center": "Main - _TC",
 					"rate": 5.0,
 				},
@@ -567,15 +567,15 @@ class TestAsset(assetetup):
 		pr.submit()
 
 		expected_gle = (
-			("_Test Account Shipping Charges - _TC", 0.0, 250.0),
+			("_Test Accounts Shipping Charges - _TC", 0.0, 250.0),
 			("Asset Received But Not Billed - _TC", 0.0, 5000.0),
-			("CWIP Account - _TC", 5250.0, 0.0),
+			("CWIP Accounts - _TC", 5250.0, 0.0),
 		)
 
 		pr_gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Purchase Receipt' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			pr.name,
 		)
 
@@ -585,16 +585,16 @@ class TestAsset(assetetup):
 		pi.submit()
 
 		expected_gle = (
-			("_Test Account Service Tax - _TC", 250.0, 0.0),
-			("_Test Account Shipping Charges - _TC", 250.0, 0.0),
+			("_Test Accounts Service Tax - _TC", 250.0, 0.0),
+			("_Test Accounts Shipping Charges - _TC", 250.0, 0.0),
 			("Asset Received But Not Billed - _TC", 5000.0, 0.0),
 			("Creditors - _TC", 0.0, 5500.0),
 		)
 
 		pi_gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Purchase Invoice' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			pi.name,
 		)
 
@@ -622,29 +622,29 @@ class TestAsset(assetetup):
 		)
 		asset_doc.submit()
 
-		expected_gle = (("_Test Fixed Asset - _TC", 5250.0, 0.0), ("CWIP Account - _TC", 0.0, 5250.0))
+		expected_gle = (("_Test Fixed Asset - _TC", 5250.0, 0.0), ("CWIP Accounts - _TC", 0.0, 5250.0))
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where voucher_type='Asset' and voucher_no = %s
-			order by account""",
+			order by accounts""",
 			asset_doc.name,
 		)
 
 		self.assertSequenceEqual(gle, expected_gle)
 
 	def test_asset_cwip_toggling_cases(self):
-		cwip = frappe.db.get_value("Asset Category", "Computers", "enable_cwip_accounting")
+		cwip = frappe.db.get_value("Asset Category", "Computers", "enable_cwip_accountsing")
 		name = frappe.db.get_value(
-			"Asset Category Account", filters={"parent": "Computers"}, fieldname=["name"]
+			"Asset Category Accounts", filters={"parent": "Computers"}, fieldname=["name"]
 		)
-		cwip_acc = "CWIP Account - _TC"
+		cwip_acc = "CWIP Accounts - _TC"
 
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", 0)
-		frappe.db.set_value("Asset Category Account", name, "capital_work_in_progress_account", "")
-		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_account", "")
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", 0)
+		frappe.db.set_value("Asset Category Accounts", name, "capital_work_in_progress_accounts", "")
+		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_accounts", "")
 
-		# case 0 -- PI with cwip disable, Asset with cwip disabled, No cwip account set
+		# case 0 -- PI with cwip disable, Asset with cwip disabled, No cwip accounts set
 		pi = make_purchase_invoice(
 			item_code="Macbook Pro", qty=1, rate=200000.0, location="Test Location", update_stock=1
 		)
@@ -663,8 +663,8 @@ class TestAsset(assetetup):
 		pr = make_purchase_receipt(
 			item_code="Macbook Pro", qty=1, rate=200000.0, location="Test Location"
 		)
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", 1)
-		frappe.db.set_value("Asset Category Account", name, "capital_work_in_progress_account", cwip_acc)
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", 1)
+		frappe.db.set_value("Asset Category Accounts", name, "capital_work_in_progress_accounts", cwip_acc)
 		asset = frappe.db.get_value("Asset", {"purchase_receipt": pr.name, "docstatus": 0}, "name")
 		asset_doc = frappe.get_doc("Asset", asset)
 		asset_doc.available_for_use_date = nowdate()
@@ -680,7 +680,7 @@ class TestAsset(assetetup):
 		pr = make_purchase_receipt(
 			item_code="Macbook Pro", qty=1, rate=200000.0, location="Test Location"
 		)
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", 0)
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", 0)
 		asset = frappe.db.get_value("Asset", {"purchase_receipt": pr.name, "docstatus": 0}, "name")
 		asset_doc = frappe.get_doc("Asset", asset)
 		asset_doc.available_for_use_date = nowdate()
@@ -696,7 +696,7 @@ class TestAsset(assetetup):
 		pi = make_purchase_invoice(
 			item_code="Macbook Pro", qty=1, rate=200000.0, location="Test Location", update_stock=1
 		)
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", 1)
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", 1)
 		asset = frappe.db.get_value("Asset", {"purchase_invoice": pi.name, "docstatus": 0}, "name")
 		asset_doc = frappe.get_doc("Asset", asset)
 		asset_doc.available_for_use_date = nowdate()
@@ -712,7 +712,7 @@ class TestAsset(assetetup):
 		pi = make_purchase_invoice(
 			item_code="Macbook Pro", qty=1, rate=200000.0, location="Test Location", update_stock=1
 		)
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", 0)
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", 0)
 		asset = frappe.db.get_value("Asset", {"purchase_invoice": pi.name, "docstatus": 0}, "name")
 		asset_doc = frappe.get_doc("Asset", asset)
 		asset_doc.available_for_use_date = nowdate()
@@ -724,9 +724,9 @@ class TestAsset(assetetup):
 		)
 		self.assertTrue(gle)
 
-		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accounting", cwip)
-		frappe.db.set_value("Asset Category Account", name, "capital_work_in_progress_account", cwip_acc)
-		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_account", cwip_acc)
+		frappe.db.set_value("Asset Category", "Computers", "enable_cwip_accountsing", cwip)
+		frappe.db.set_value("Asset Category Accounts", name, "capital_work_in_progress_accounts", cwip_acc)
+		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_accounts", cwip_acc)
 
 
 class TestDepreciationMethods(assetetup):
@@ -960,7 +960,7 @@ class TestDepreciationMethods(assetetup):
 
 		self.assertEqual(schedules, expected_schedules)
 
-	def test_monthly_depreciation_by_wdv_method(self):
+	def test_mounth_depreciation_by_wdv_method(self):
 		asset = create_asset(
 			calculate_depreciation=1,
 			available_for_use_date="2022-02-15",
@@ -1280,8 +1280,8 @@ class TestDepreciationBasics(assetetup):
 		self.assertFalse(depr_schedule[1].journal_entry)
 		self.assertFalse(depr_schedule[2].journal_entry)
 
-	def test_depr_entry_posting_when_depr_expense_account_is_an_expense_account(self):
-		"""Tests if the Depreciation Expense Account gets debited and the Accumulated Depreciation Account gets credited when the former's an Expense Account."""
+	def test_depr_entry_posting_when_depr_expense_accounts_is_an_expense_accounts(self):
+		"""Tests if the Depreciation Expense Accounts gets debited and the Accumulated Depreciation Accounts gets credited when the former's an Expense Accounts."""
 
 		asset = create_asset(
 			item_code="Macbook Pro",
@@ -1298,26 +1298,26 @@ class TestDepreciationBasics(assetetup):
 		asset.load_from_db()
 
 		je = frappe.get_doc("Journal Entry", get_depr_schedule(asset.name, "Active")[0].journal_entry)
-		accounting_entries = [
-			{"account": entry.account, "debit": entry.debit, "credit": entry.credit}
-			for entry in je.accounts
+		accountsing_entries = [
+			{"accounts": entry.accounts, "debit": entry.debit, "credit": entry.credit}
+			for entry in je.accountss
 		]
 
-		for entry in accounting_entries:
-			if entry["account"] == "_Test Depreciations - _TC":
+		for entry in accountsing_entries:
+			if entry["accounts"] == "_Test Depreciations - _TC":
 				self.assertTrue(entry["debit"])
 				self.assertFalse(entry["credit"])
 			else:
 				self.assertTrue(entry["credit"])
 				self.assertFalse(entry["debit"])
 
-	def test_depr_entry_posting_when_depr_expense_account_is_an_income_account(self):
-		"""Tests if the Depreciation Expense Account gets credited and the Accumulated Depreciation Account gets debited when the former's an Income Account."""
+	def test_depr_entry_posting_when_depr_expense_accounts_is_an_income_accounts(self):
+		"""Tests if the Depreciation Expense Accounts gets credited and the Accumulated Depreciation Accounts gets debited when the former's an Income Accounts."""
 
-		depr_expense_account = frappe.get_doc("Account", "_Test Depreciations - _TC")
-		depr_expense_account.root_type = "Income"
-		depr_expense_account.parent_account = "Income - _TC"
-		depr_expense_account.save()
+		depr_expense_accounts = frappe.get_doc("Accounts", "_Test Depreciations - _TC")
+		depr_expense_accounts.root_type = "Income"
+		depr_expense_accounts.parent_accounts = "Income - _TC"
+		depr_expense_accounts.save()
 
 		asset = create_asset(
 			item_code="Macbook Pro",
@@ -1334,13 +1334,13 @@ class TestDepreciationBasics(assetetup):
 		asset.load_from_db()
 
 		je = frappe.get_doc("Journal Entry", get_depr_schedule(asset.name, "Active")[0].journal_entry)
-		accounting_entries = [
-			{"account": entry.account, "debit": entry.debit, "credit": entry.credit}
-			for entry in je.accounts
+		accountsing_entries = [
+			{"accounts": entry.accounts, "debit": entry.debit, "credit": entry.credit}
+			for entry in je.accountss
 		]
 
-		for entry in accounting_entries:
-			if entry["account"] == "_Test Depreciations - _TC":
+		for entry in accountsing_entries:
+			if entry["accounts"] == "_Test Depreciations - _TC":
 				self.assertTrue(entry["credit"])
 				self.assertFalse(entry["debit"])
 			else:
@@ -1348,9 +1348,9 @@ class TestDepreciationBasics(assetetup):
 				self.assertFalse(entry["credit"])
 
 		# resetting
-		depr_expense_account.root_type = "Expense"
-		depr_expense_account.parent_account = "Expenses - _TC"
-		depr_expense_account.save()
+		depr_expense_accounts.root_type = "Expense"
+		depr_expense_accounts.parent_accounts = "Expenses - _TC"
+		depr_expense_accounts.save()
 
 	def test_clear_depr_schedule(self):
 		"""Tests if clear_depr_schedule() works as expected."""
@@ -1550,9 +1550,9 @@ class TestDepreciationBasics(assetetup):
 		)
 
 		gle = frappe.db.sql(
-			"""select account, debit, credit from `tabGL Entry`
+			"""select accounts, debit, credit from `tabGL Entry`
 			where against_voucher_type='Asset' and against_voucher = %s
-			order by account""",
+			order by accounts""",
 			asset.name,
 		)
 
@@ -1630,7 +1630,7 @@ class TestDepreciationBasics(assetetup):
 		jv = make_journal_entry(
 			"_Test Depreciations - _TC", "_Test Accumulated Depreciations - _TC", 100, save=False
 		)
-		for d in jv.accounts:
+		for d in jv.accountss:
 			d.reference_type = "Asset"
 			d.reference_name = asset.name
 		jv.voucher_type = "Depreciation Entry"
@@ -1663,7 +1663,7 @@ class TestDepreciationBasics(assetetup):
 		jv = make_journal_entry(
 			"_Test Depreciations - _TC", "_Test Accumulated Depreciations - _TC", 100, save=False
 		)
-		for d in jv.accounts:
+		for d in jv.accountss:
 			d.reference_type = "Asset"
 			d.reference_name = asset.name
 		jv.voucher_type = "Depreciation Entry"
@@ -1693,10 +1693,10 @@ class TestDepreciationBasics(assetetup):
 		jv = make_journal_entry(
 			"_Test Depreciations - _TC", "_Test Accumulated Depreciations - _TC", 100, save=False
 		)
-		for d in jv.accounts:
+		for d in jv.accountss:
 			d.reference_type = "Asset"
 			d.reference_name = asset.name
-			d.account_type = "Depreciation"
+			d.accounts_type = "Depreciation"
 		jv.voucher_type = "Journal Entry"
 
 		self.assertRaises(frappe.ValidationError, jv.insert)
@@ -1783,24 +1783,24 @@ def create_asset_category():
 	asset_category.asset_category_name = "Computers"
 	asset_category.total_number_of_depreciations = 3
 	asset_category.frequency_of_depreciation = 3
-	asset_category.enable_cwip_accounting = 1
+	asset_category.enable_cwip_accountsing = 1
 	asset_category.append(
-		"accounts",
+		"accountss",
 		{
 			"company_name": "_Test Company",
-			"fixed_asset_account": "_Test Fixed Asset - _TC",
-			"accumulated_depreciation_account": "_Test Accumulated Depreciations - _TC",
-			"depreciation_expense_account": "_Test Depreciations - _TC",
-			"capital_work_in_progress_account": "CWIP Account - _TC",
+			"fixed_asset_accounts": "_Test Fixed Asset - _TC",
+			"accumulated_depreciation_accounts": "_Test Accumulated Depreciations - _TC",
+			"depreciation_expense_accounts": "_Test Depreciations - _TC",
+			"capital_work_in_progress_accounts": "CWIP Accounts - _TC",
 		},
 	)
 	asset_category.append(
-		"accounts",
+		"accountss",
 		{
 			"company_name": "_Test Company with perpetual inventory",
-			"fixed_asset_account": "_Test Fixed Asset - TCP1",
-			"accumulated_depreciation_account": "_Test Accumulated Depreciations - TCP1",
-			"depreciation_expense_account": "_Test Depreciations - TCP1",
+			"fixed_asset_accounts": "_Test Fixed Asset - TCP1",
+			"accumulated_depreciation_accounts": "_Test Accumulated Depreciations - TCP1",
+			"depreciation_expense_accounts": "_Test Depreciations - TCP1",
 		},
 	)
 
@@ -1837,15 +1837,15 @@ def set_depreciation_settings_in_company(company=None):
 	if not company:
 		company = "_Test Company"
 	company = frappe.get_doc("Company", company)
-	company.accumulated_depreciation_account = "_Test Accumulated Depreciations - " + company.abbr
-	company.depreciation_expense_account = "_Test Depreciations - " + company.abbr
-	company.disposal_account = "_Test Gain/Loss on Asset Disposal - " + company.abbr
+	company.accumulated_depreciation_accounts = "_Test Accumulated Depreciations - " + company.abbr
+	company.depreciation_expense_accounts = "_Test Depreciations - " + company.abbr
+	company.disposal_accounts = "_Test Gain/Loss on Asset Disposal - " + company.abbr
 	company.depreciation_cost_center = "Main - " + company.abbr
 	company.save()
 
 	# Enable booking asset depreciation entry automatically
-	frappe.db.set_single_value("Accounts Settings", "book_asset_depreciation_entry_automatically", 1)
+	frappe.db.set_single_value("Accountss Settings", "book_asset_depreciation_entry_automatically", 1)
 
 
-def enable_cwip_accounting(asset_category, enable=1):
-	frappe.db.set_value("Asset Category", asset_category, "enable_cwip_accounting", enable)
+def enable_cwip_accountsing(asset_category, enable=1):
+	frappe.db.set_value("Asset Category", asset_category, "enable_cwip_accountsing", enable)

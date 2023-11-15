@@ -45,10 +45,10 @@
   "total_value",
   "column_break_36",
   "target_incoming_rate",
-  "accounting_dimensions_section",
+  "accountsing_dimensions_section",
   "cost_center",
   "dimension_col_break",
-  "target_fixed_asset_account"
+  "target_fixed_asset_accounts"
  ],
  "fields": [
   {
@@ -315,9 +315,9 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "accounting_dimensions_section",
+   "fieldname": "accountsing_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "label": "Accountsing Dimensions"
   },
   {
    "fieldname": "cost_center",
@@ -330,10 +330,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "target_fixed_asset_account",
+   "fieldname": "target_fixed_asset_accounts",
    "fieldtype": "Link",
-   "label": "Target Fixed Asset Account",
-   "options": "Account",
+   "label": "Target Fixed Asset Accounts",
+   "options": "Accounts",
    "read_only": 1
   },
   {

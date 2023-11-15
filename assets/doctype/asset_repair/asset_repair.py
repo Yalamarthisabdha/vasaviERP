@@ -6,17 +6,17 @@ from frappe import _
 from frappe.utils import add_months, cint, flt, get_link_to_form, getdate, time_diff_in_hours
 
 import erpnext
-from erpnext.accounts.general_ledger import make_gl_entries
-from erpnext.asset.doctype.asset.asset import get_asset_account
+from erpnext.accountss.general_ledger import make_gl_entries
+from erpnext.asset.doctype.asset.asset import get_asset_accounts
 from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
 from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	get_depr_schedule,
 	make_new_active_asset_depr_schedules_and_cancel_current_ones,
 )
-from erpnext.controllers.accounts_controller import AccountsController
+from erpnext.controllers.accountss_controller import AccountssController
 
 
-class AssetRepair(AccountsController):
+class AssetRepair(AccountssController):
 	def validate(self):
 		self.asset_doc = frappe.get_doc("Asset", self.asset)
 		self.update_status()
@@ -219,29 +219,29 @@ class AssetRepair(AccountsController):
 	def get_gl_entries(self):
 		gl_entries = []
 
-		fixed_asset_account = get_asset_account(
-			"fixed_asset_account", asset=self.asset, company=self.company
+		fixed_asset_accounts = get_asset_accounts(
+			"fixed_asset_accounts", asset=self.asset, company=self.company
 		)
-		self.get_gl_entries_for_repair_cost(gl_entries, fixed_asset_account)
-		self.get_gl_entries_for_consumed_items(gl_entries, fixed_asset_account)
+		self.get_gl_entries_for_repair_cost(gl_entries, fixed_asset_accounts)
+		self.get_gl_entries_for_consumed_items(gl_entries, fixed_asset_accounts)
 
 		return gl_entries
 
-	def get_gl_entries_for_repair_cost(self, gl_entries, fixed_asset_account):
+	def get_gl_entries_for_repair_cost(self, gl_entries, fixed_asset_accounts):
 		if flt(self.repair_cost) <= 0:
 			return
 
-		pi_expense_account = (
-			frappe.get_doc("Purchase Invoice", self.purchase_invoice).items[0].expense_account
+		pi_expense_accounts = (
+			frappe.get_doc("Purchase Invoice", self.purchase_invoice).items[0].expense_accounts
 		)
 
 		gl_entries.append(
 			self.get_gl_dict(
 				{
-					"account": fixed_asset_account,
+					"accounts": fixed_asset_accounts,
 					"debit": self.repair_cost,
-					"debit_in_account_currency": self.repair_cost,
-					"against": pi_expense_account,
+					"debit_in_accounts_currency": self.repair_cost,
+					"against": pi_expense_accounts,
 					"voucher_type": self.doctype,
 					"voucher_no": self.name,
 					"cost_center": self.cost_center,
@@ -257,10 +257,10 @@ class AssetRepair(AccountsController):
 		gl_entries.append(
 			self.get_gl_dict(
 				{
-					"account": pi_expense_account,
+					"accounts": pi_expense_accounts,
 					"credit": self.repair_cost,
-					"credit_in_account_currency": self.repair_cost,
-					"against": fixed_asset_account,
+					"credit_in_accounts_currency": self.repair_cost,
+					"against": fixed_asset_accounts,
 					"voucher_type": self.doctype,
 					"voucher_no": self.name,
 					"cost_center": self.cost_center,
@@ -271,30 +271,30 @@ class AssetRepair(AccountsController):
 			)
 		)
 
-	def get_gl_entries_for_consumed_items(self, gl_entries, fixed_asset_account):
+	def get_gl_entries_for_consumed_items(self, gl_entries, fixed_asset_accounts):
 		if not (self.get("stock_consumption") and self.get("stock_items")):
 			return
 
 		# creating GL Entries for each row in Stock Items based on the Stock Entry created for it
 		stock_entry = frappe.get_doc("Stock Entry", self.stock_entry)
 
-		default_expense_account = None
+		default_expense_accounts = None
 		if not erpnext.is_perpetual_inventory_enabled(self.company):
-			default_expense_account = frappe.get_cached_value(
-				"Company", self.company, "default_expense_account"
+			default_expense_accounts = frappe.get_cached_value(
+				"Company", self.company, "default_expense_accounts"
 			)
-			if not default_expense_account:
-				frappe.throw(_("Please set default Expense Account in Company {0}").format(self.company))
+			if not default_expense_accounts:
+				frappe.throw(_("Please set default Expense Accounts in Company {0}").format(self.company))
 
 		for item in stock_entry.items:
 			if flt(item.amount) > 0:
 				gl_entries.append(
 					self.get_gl_dict(
 						{
-							"account": item.expense_account or default_expense_account,
+							"accounts": item.expense_accounts or default_expense_accounts,
 							"credit": item.amount,
-							"credit_in_account_currency": item.amount,
-							"against": fixed_asset_account,
+							"credit_in_accounts_currency": item.amount,
+							"against": fixed_asset_accounts,
 							"voucher_type": self.doctype,
 							"voucher_no": self.name,
 							"cost_center": self.cost_center,
@@ -308,10 +308,10 @@ class AssetRepair(AccountsController):
 				gl_entries.append(
 					self.get_gl_dict(
 						{
-							"account": fixed_asset_account,
+							"accounts": fixed_asset_accounts,
 							"debit": item.amount,
-							"debit_in_account_currency": item.amount,
-							"against": item.expense_account or default_expense_account,
+							"debit_in_accounts_currency": item.amount,
+							"against": item.expense_accounts or default_expense_accounts,
 							"voucher_type": self.doctype,
 							"voucher_no": self.name,
 							"cost_center": self.cost_center,

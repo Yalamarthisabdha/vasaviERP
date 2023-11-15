@@ -8,14 +8,14 @@
   "item_code",
   "item_name",
   "column_break_3",
-  "expense_account",
+  "expense_accounts",
   "section_break_6",
   "qty",
   "uom",
   "column_break_9",
   "rate",
   "amount",
-  "accounting_dimensions_section",
+  "accountsing_dimensions_section",
   "cost_center",
   "dimension_col_break"
  ],
@@ -40,11 +40,11 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "expense_account",
+   "fieldname": "expense_accounts",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Expense Account",
-   "options": "Account",
+   "label": "Expense Accounts",
+   "options": "Accounts",
    "reqd": 1
   },
   {
@@ -92,9 +92,9 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "accounting_dimensions_section",
+   "fieldname": "accountsing_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "label": "Accountsing Dimensions"
   },
   {
    "fieldname": "cost_center",

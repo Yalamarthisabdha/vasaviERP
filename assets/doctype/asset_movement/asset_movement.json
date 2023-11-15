@@ -57,7 +57,7 @@
   {
    "fieldname": "reference_doctype",
    "fieldtype": "Link",
-   "label": "Reference Document Type",
+   "label": "Reference document tpy",
    "no_copy": 1,
    "options": "DocType"
   },
@@ -128,7 +128,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts Manager",
+   "role": "Accountss Manager",
    "share": 1,
    "submit": 1,
    "write": 1

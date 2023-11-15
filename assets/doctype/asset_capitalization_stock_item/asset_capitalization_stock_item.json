@@ -21,7 +21,7 @@
   "column_break_13",
   "batch_no",
   "serial_no",
-  "accounting_dimensions_section",
+  "accountsing_dimensions_section",
   "cost_center",
   "dimension_col_break"
  ],
@@ -133,9 +133,9 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "accounting_dimensions_section",
+   "fieldname": "accountsing_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "label": "Accountsing Dimensions"
   },
   {
    "fieldname": "cost_center",

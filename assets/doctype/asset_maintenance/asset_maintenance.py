@@ -77,7 +77,7 @@ def calculate_next_due_date(
 		next_due_date = add_days(start_date, 1)
 	if periodicity == "Weekly":
 		next_due_date = add_days(start_date, 7)
-	if periodicity == "Monthly":
+	if periodicity == "mounth":
 		next_due_date = add_months(start_date, 1)
 	if periodicity == "Quarterly":
 		next_due_date = add_months(start_date, 3)
@@ -149,7 +149,7 @@ def get_team_members(doctype, txt, searchfield, start, page_len, filters):
 def get_maintenance_log(asset_name):
 	return frappe.db.sql(
 		"""
-        select maintenance_status, count(asset_name) as count, asset_name
+        select maintenance_status, counts(asset_name) as counts, asset_name
         from `tabAsset Maintenance Log`
         where asset_name=%s group by maintenance_status""",
 		(asset_name),

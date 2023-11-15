@@ -11,9 +11,9 @@ from frappe.utils import cint, get_link_to_form
 class AssetCategory(Document):
 	def validate(self):
 		self.validate_finance_books()
-		self.validate_account_types()
-		self.validate_account_currency()
-		self.valide_cwip_account()
+		self.validate_accounts_types()
+		self.validate_accounts_currency()
+		self.valide_cwip_accounts()
 
 	def validate_finance_books(self):
 		for d in self.finance_books:
@@ -23,98 +23,98 @@ class AssetCategory(Document):
 						_("Row {0}: {1} must be greater than 0").format(d.idx, field), frappe.MandatoryError
 					)
 
-	def validate_account_currency(self):
-		account_types = [
-			"fixed_asset_account",
-			"accumulated_depreciation_account",
-			"depreciation_expense_account",
-			"capital_work_in_progress_account",
+	def validate_accounts_currency(self):
+		accounts_types = [
+			"fixed_asset_accounts",
+			"accumulated_depreciation_accounts",
+			"depreciation_expense_accounts",
+			"capital_work_in_progress_accounts",
 		]
-		invalid_accounts = []
-		for d in self.accounts:
+		invalid_accountss = []
+		for d in self.accountss:
 			company_currency = frappe.get_value("Company", d.get("company_name"), "default_currency")
-			for type_of_account in account_types:
-				if d.get(type_of_account):
-					account_currency = frappe.get_value("Account", d.get(type_of_account), "account_currency")
-					if account_currency != company_currency:
-						invalid_accounts.append(
-							frappe._dict({"type": type_of_account, "idx": d.idx, "account": d.get(type_of_account)})
+			for type_of_accounts in accounts_types:
+				if d.get(type_of_accounts):
+					accounts_currency = frappe.get_value("Accounts", d.get(type_of_accounts), "accounts_currency")
+					if accounts_currency != company_currency:
+						invalid_accountss.append(
+							frappe._dict({"type": type_of_accounts, "idx": d.idx, "accounts": d.get(type_of_accounts)})
 						)
 
-		for d in invalid_accounts:
+		for d in invalid_accountss:
 			frappe.throw(
 				_("Row #{}: Currency of {} - {} doesn't matches company currency.").format(
-					d.idx, frappe.bold(frappe.unscrub(d.type)), frappe.bold(d.account)
+					d.idx, frappe.bold(frappe.unscrub(d.type)), frappe.bold(d.accounts)
 				),
-				title=_("Invalid Account"),
+				title=_("Invalid Accounts"),
 			)
 
-	def validate_account_types(self):
-		account_type_map = {
-			"fixed_asset_account": {"account_type": ["Fixed Asset"]},
-			"accumulated_depreciation_account": {"account_type": ["Accumulated Depreciation"]},
-			"depreciation_expense_account": {"account_type": ["Depreciation"]},
-			"capital_work_in_progress_account": {"account_type": ["Capital Work in Progress"]},
+	def validate_accounts_types(self):
+		accounts_type_map = {
+			"fixed_asset_accounts": {"accounts_type": ["Fixed Asset"]},
+			"accumulated_depreciation_accounts": {"accounts_type": ["Accumulated Depreciation"]},
+			"depreciation_expense_accounts": {"accounts_type": ["Depreciation"]},
+			"capital_work_in_progress_accounts": {"accounts_type": ["Capital Work in Progress"]},
 		}
-		for d in self.accounts:
-			for fieldname in account_type_map.keys():
+		for d in self.accountss:
+			for fieldname in accounts_type_map.keys():
 				if d.get(fieldname):
-					selected_account = d.get(fieldname)
-					key_to_match = next(iter(account_type_map.get(fieldname)))  # acount_type or root_type
-					selected_key_type = frappe.db.get_value("Account", selected_account, key_to_match)
-					expected_key_types = account_type_map[fieldname][key_to_match]
+					selected_accounts = d.get(fieldname)
+					key_to_match = next(iter(accounts_type_map.get(fieldname)))  # acounts_type or root_type
+					selected_key_type = frappe.db.get_value("Accounts", selected_accounts, key_to_match)
+					expected_key_types = accounts_type_map[fieldname][key_to_match]
 
 					if selected_key_type not in expected_key_types:
 						frappe.throw(
 							_(
-								"Row #{}: {} of {} should be {}. Please modify the account or select a different account."
+								"Row #{}: {} of {} should be {}. Please modify the accounts or select a different accounts."
 							).format(
 								d.idx,
 								frappe.unscrub(key_to_match),
-								frappe.bold(selected_account),
+								frappe.bold(selected_accounts),
 								frappe.bold(expected_key_types),
 							),
-							title=_("Invalid Account"),
+							title=_("Invalid Accounts"),
 						)
 
-	def valide_cwip_account(self):
-		if self.enable_cwip_accounting:
-			missing_cwip_accounts_for_company = []
-			for d in self.accounts:
-				if not d.capital_work_in_progress_account and not frappe.db.get_value(
-					"Company", d.company_name, "capital_work_in_progress_account"
+	def valide_cwip_accounts(self):
+		if self.enable_cwip_accountsing:
+			missing_cwip_accountss_for_company = []
+			for d in self.accountss:
+				if not d.capital_work_in_progress_accounts and not frappe.db.get_value(
+					"Company", d.company_name, "capital_work_in_progress_accounts"
 				):
-					missing_cwip_accounts_for_company.append(get_link_to_form("Company", d.company_name))
+					missing_cwip_accountss_for_company.append(get_link_to_form("Company", d.company_name))
 
-			if missing_cwip_accounts_for_company:
-				msg = _("""To enable Capital Work in Progress Accounting,""") + " "
-				msg += _("""you must select Capital Work in Progress Account in accounts table""")
+			if missing_cwip_accountss_for_company:
+				msg = _("""To enable Capital Work in Progress Accountsing,""") + " "
+				msg += _("""you must select Capital Work in Progress Accounts in accountss table""")
 				msg += "<br><br>"
-				msg += _("You can also set default CWIP account in Company {}").format(
-					", ".join(missing_cwip_accounts_for_company)
+				msg += _("You can also set default CWIP accounts in Company {}").format(
+					", ".join(missing_cwip_accountss_for_company)
 				)
-				frappe.throw(msg, title=_("Missing Account"))
+				frappe.throw(msg, title=_("Missing Accounts"))
 
 
-def get_asset_category_account(
-	fieldname, item=None, asset=None, account=None, asset_category=None, company=None
+def get_asset_category_accounts(
+	fieldname, item=None, asset=None, accounts=None, asset_category=None, company=None
 ):
 	if item and frappe.db.get_value("Item", item, "is_fixed_asset"):
 		asset_category = frappe.db.get_value("Item", item, ["asset_category"])
 
 	elif not asset_category or not company:
-		if account:
-			if frappe.db.get_value("Account", account, "account_type") != "Fixed Asset":
-				account = None
+		if accounts:
+			if frappe.db.get_value("Accounts", accounts, "accounts_type") != "Fixed Asset":
+				accounts = None
 
-		if not account:
+		if not accounts:
 			asset_details = frappe.db.get_value("Asset", asset, ["asset_category", "company"])
 			asset_category, company = asset_details or [None, None]
 
-	account = frappe.db.get_value(
-		"Asset Category Account",
+	accounts = frappe.db.get_value(
+		"Asset Category Accounts",
 		filters={"parent": asset_category, "company_name": company},
 		fieldname=fieldname,
 	)
 
-	return account
+	return accounts

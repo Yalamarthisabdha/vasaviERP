@@ -7,11 +7,11 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, formatdate, get_link_to_form, getdate
 
-from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
-	get_checks_for_pl_and_bs_accounts,
+from erpnext.accountss.doctype.accountsing_dimension.accountsing_dimension import (
+	get_checks_for_pl_and_bs_accountss,
 )
 from erpnext.asset.doctype.asset.asset import get_asset_value_after_depreciation
-from erpnext.asset.doctype.asset.depreciation import get_depreciation_accounts
+from erpnext.asset.doctype.asset.depreciation import get_depreciation_accountss
 from erpnext.asset.doctype.asset_activity.asset_activity import add_asset_activity
 from erpnext.asset.doctype.asset_depreciation_schedule.asset_depreciation_schedule import (
 	make_new_active_asset_depr_schedules_and_cancel_current_ones,
@@ -64,9 +64,9 @@ class AssetValueAdjustment(Document):
 		asset = frappe.get_doc("Asset", self.asset)
 		(
 			_,
-			accumulated_depreciation_account,
-			depreciation_expense_account,
-		) = get_depreciation_accounts(asset.asset_category, asset.company)
+			accumulated_depreciation_accounts,
+			depreciation_expense_accounts,
+		) = get_depreciation_accountss(asset.asset_category, asset.company)
 
 		depreciation_cost_center, depreciation_series = frappe.get_cached_value(
 			"Company", asset.company, ["depreciation_cost_center", "series_for_depreciation_entry"]
@@ -81,24 +81,24 @@ class AssetValueAdjustment(Document):
 		je.finance_book = self.finance_book
 
 		credit_entry = {
-			"account": accumulated_depreciation_account,
-			"credit_in_account_currency": self.difference_amount,
+			"accounts": accumulated_depreciation_accounts,
+			"credit_in_accounts_currency": self.difference_amount,
 			"cost_center": depreciation_cost_center or self.cost_center,
 			"reference_type": "Asset",
 			"reference_name": self.asset,
 		}
 
 		debit_entry = {
-			"account": depreciation_expense_account,
-			"debit_in_account_currency": self.difference_amount,
+			"accounts": depreciation_expense_accounts,
+			"debit_in_accounts_currency": self.difference_amount,
 			"cost_center": depreciation_cost_center or self.cost_center,
 			"reference_type": "Asset",
 			"reference_name": self.asset,
 		}
 
-		accounting_dimensions = get_checks_for_pl_and_bs_accounts()
+		accountsing_dimensions = get_checks_for_pl_and_bs_accountss()
 
-		for dimension in accounting_dimensions:
+		for dimension in accountsing_dimensions:
 			if dimension.get("mandatory_for_bs"):
 				credit_entry.update(
 					{
@@ -115,8 +115,8 @@ class AssetValueAdjustment(Document):
 					}
 				)
 
-		je.append("accounts", credit_entry)
-		je.append("accounts", debit_entry)
+		je.append("accountss", credit_entry)
+		je.append("accountss", debit_entry)
 
 		je.flags.ignore_permissions = True
 		je.submit()
